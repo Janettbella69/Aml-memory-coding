@@ -24,13 +24,14 @@ Repo on the box: `~/aml-memory-coding`. Compose project: `codememory` (volume `c
    `172.17.0.1`, set `BIND_IP=` in `.env` to that address.
 4. Start the service: `docker compose -p codememory -f deploy/tencent/docker-compose.yml --env-file .env up -d --build`,
    then `curl -s http://$(grep ^BIND_IP .env | cut -d= -f2):8200/health` → `{"status":"ok","version":"coding-0.2.0"}`.
-5. nginx, step 1 (HTTP): insert `deploy/tencent/nginx-80.conf` inside the `http { … }` block of `~/AIAzora-v3/nginx.conf`
-   (before its final `}`), then `docker exec aiazora-v3-nginx-1 nginx -t && docker exec aiazora-v3-nginx-1 nginx -s reload`.
+5. nginx, step 1 (HTTP): `python3 ~/aml-memory-coding/deploy/tencent/nginx_insert.py ~/AIAzora-v3/nginx.conf ~/aml-memory-coding/deploy/tencent/nginx-80.conf`
+   (inserts the block before the final `}` of the `http { … }` block and keeps `nginx.conf.bak`), then
+   `docker exec aiazora-v3-nginx-1 nginx -t && docker exec aiazora-v3-nginx-1 nginx -s reload`.
    The file is bind-mounted read-only into the container, so editing it on the host is enough.
 6. Certificate (the certbot container of the Azora stack, webroot shared with nginx):
    `cd ~/AIAzora-v3 && docker compose -f docker-compose.prod.yml run --rm certbot certonly --webroot -w /var/www/certbot -d codememory.azorashopping.site --agree-tos --no-eff-email`
    → `Successfully received certificate` under `certbot/conf/live/codememory.azorashopping.site/`.
-7. nginx, step 2 (TLS): insert `deploy/tencent/nginx-443.conf` the same way, `nginx -t`, reload.
+7. nginx, step 2 (TLS): `python3 ~/aml-memory-coding/deploy/tencent/nginx_insert.py ~/AIAzora-v3/nginx.conf ~/aml-memory-coding/deploy/tencent/nginx-443.conf`, then `nginx -t` and reload as in step 5.
 8. `curl -s https://codememory.azorashopping.site/health` → `{"status":"ok","version":"coding-0.2.0"}`;
    from the laptop: `uv run python scripts/smoke_test.py https://codememory.azorashopping.site <MEMORY_API_KEY>`.
 
