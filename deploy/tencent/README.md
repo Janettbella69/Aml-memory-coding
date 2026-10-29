@@ -16,10 +16,14 @@ Repo on the box: `~/aml-memory-coding`. Compose project: `codememory` (volume `c
    `git archive --format=tar --prefix=aml-memory-coding/ HEAD | ssh -i ~/.ssh/id_ed25519_43_162_99_246 ubuntu@43.162.107.53 'tar -x -C ~'`.
 3. `.env`: `cd ~/aml-memory-coding && cp .env.example .env`, then set `MEMORY_API_KEY` to a random secret ≥ 16 chars
    (`openssl rand -hex 24`); it is declared as `X-Api-Key` and sent to the organisers through their secure channel only.
+   coding-0.2.0 also needs `OPENAI_API_KEY` (the OpenRouter key; `OPENAI_BASE_URL=https://openrouter.ai/api/v1` and the
+   model ids `openai/gpt-4o-mini` are already in the example) for the Add-time summaries and the card selector; keep
+   `SUMMARY_CACHE=/data/summary_cache.sqlite` (inside the volume, so a history written again costs nothing). The start-up
+   log must show `add-time summaries enabled` and `card selector enabled`; without the key both silently stay off.
    Check the bridge gateway: `docker network inspect bridge --format '{{(index .IPAM.Config 0).Gateway}}'` — if it is not
    `172.17.0.1`, set `BIND_IP=` in `.env` to that address.
 4. Start the service: `docker compose -p codememory -f deploy/tencent/docker-compose.yml --env-file .env up -d --build`,
-   then `curl -s http://$(grep ^BIND_IP .env | cut -d= -f2):8200/health` → `{"status":"ok","version":"coding-0.1.0"}`.
+   then `curl -s http://$(grep ^BIND_IP .env | cut -d= -f2):8200/health` → `{"status":"ok","version":"coding-0.2.0"}`.
 5. nginx, step 1 (HTTP): insert `deploy/tencent/nginx-80.conf` inside the `http { … }` block of `~/AIAzora-v3/nginx.conf`
    (before its final `}`), then `docker exec aiazora-v3-nginx-1 nginx -t && docker exec aiazora-v3-nginx-1 nginx -s reload`.
    The file is bind-mounted read-only into the container, so editing it on the host is enough.
@@ -27,7 +31,7 @@ Repo on the box: `~/aml-memory-coding`. Compose project: `codememory` (volume `c
    `cd ~/AIAzora-v3 && docker compose -f docker-compose.prod.yml run --rm certbot certonly --webroot -w /var/www/certbot -d codememory.azorashopping.site --agree-tos --no-eff-email`
    → `Successfully received certificate` under `certbot/conf/live/codememory.azorashopping.site/`.
 7. nginx, step 2 (TLS): insert `deploy/tencent/nginx-443.conf` the same way, `nginx -t`, reload.
-8. `curl -s https://codememory.azorashopping.site/health` → `{"status":"ok","version":"coding-0.1.0"}`;
+8. `curl -s https://codememory.azorashopping.site/health` → `{"status":"ok","version":"coding-0.2.0"}`;
    from the laptop: `uv run python scripts/smoke_test.py https://codememory.azorashopping.site <MEMORY_API_KEY>`.
 
 Renewal: the certbot container renews every certificate it holds every 12 h; nginx needs a reload afterwards
