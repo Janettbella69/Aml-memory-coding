@@ -1,6 +1,6 @@
 [project]
 name = "aml-memory"
-version = "1.1.0"
+version = "0.1.0"   # declared version name: coding-0.1.0 (app/__init__.py, git tag); PEP 440 needs a numeric version here
 description = "Agent Memory Leaderboard Add/Search service: raw chunks + SQLite FTS5 BM25 + standing-rule slots + temporal rendering"
 requires-python = ">=3.12"
 dependencies = [

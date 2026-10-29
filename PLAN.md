@@ -1,4 +1,12 @@
-# PLAN — AML Cycle 2 (textual, Open-source Methods)
+# PLAN — coding entry (Janettbella69/Aml-memory-coding, coding-0.1.0)
+
+Separate registration of a coding-track implementation (organisers' written agreement, 2026-10-28): the textual Full result stays as it is; the coding entry needs its own fixed commit, version name, Add/Search/Health URLs, capacity declaration and credentials (sent through their secure channel). Materials deadline 2026-10-31 23:59 UTC+8 (= 08:59 US Pacific).
+
+## Status board
+- 10-28 · base: v1.0.0 imported byte-for-byte (7960fda); CODE_TERMS + SESSION_CARDS + coding configuration + `scripts/eval_swecb.py` + 7 tests (593f985); SWEContextBench Lite paired-session hit@1 0.576 → 0.646, task statement returned 0.515 → 0.990 (numbers in `docs/METHOD_CARD.md`); version name `coding-0.1.0`; Tencent deploy kit `deploy/tencent/` (behind the Azora nginx, port 8200 on the bridge gateway); DNS `codememory.azorashopping.site` live.
+- Open: push + tag `coding-0.1.0` (user's go-ahead) → deploy on the Tencent box (user runs the commands) → health + smoke → soak for the capacity declaration → evaluation-access request for the coding binding (new credentials; FAQ Q6 "更换端点流程", naming the original system and the target track) → platform smoke → one Full (0.5–2 days). Optional, paid: dense channel / planner arms on the proxy (≈ ¥4 + US$0.1) before freezing.
+
+# (imported) PLAN — AML Cycle 2 (textual, Open-source Methods)
 
 Start 2026-10-07. Materials deadline 2026-10-31 23:59 UTC+8 (= 08:59 US Pacific the same day). Evaluation closes 2026-11-04 23:59 UTC+8 (= 07:59 US Pacific; US daylight saving ends 11-01). A Full run must be accepted early enough to finish before the close.
 
