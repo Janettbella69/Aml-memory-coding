@@ -1,0 +1,924 @@
+[
+ {
+  "qa_id": "proxy:conv-0#q0000",
+  "qa_type": "single_choice",
+  "stem": "How did Madame la Grange know that Miss Eastwood meant to meet Jimmy at the Ritz?",
+  "option": [
+   "A. Mr. Wales had described each guest to her beforehand.",
+   "B. Her spirit control, Laughing Eyes, revealed it while she was in a trance.",
+   "C. She overheard Miss Eastwood discussing it with Miss Erskine.",
+   "D. She read his letter, left in Miss Eastwood's bag in the hall, and knew whose bag it was because its material matched Miss Eastwood's dress.",
+   "E. Pollock the butler mentioned it when he announced her.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "How did Madame la Grange know that Miss Eastwood meant to meet Jimmy at the Ritz?\n\nA. Mr. Wales had described each guest to her beforehand.\nB. Her spirit control, Laughing Eyes, revealed it while she was in a trance.\nC. She overheard Miss Eastwood discussing it with Miss Erskine.\nD. She read his letter, left in Miss Eastwood's bag in the hall, and knew whose bag it was because its material matched Miss Eastwood's dress.\nE. Pollock the butler mentioned it when he announced her.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "D"
+  ],
+  "evidence": [
+   "D1:166",
+   "D1:168"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0001",
+  "qa_type": "single_choice",
+  "stem": "How did Madame la Grange produce the spirit raps in the lighted room?",
+  "option": [
+   "A. With a wooden sole in her shoe, rapping with a foot slipped out of its slipper.",
+   "B. With her thumbs hooked under the edge of the console table.",
+   "C. An accomplice knocked from behind the fireplace.",
+   "D. By freeing one hand while the two men beside her held each other's hands.",
+   "E. By shaking the keys Mr. Crosby had handed to the butler.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "How did Madame la Grange produce the spirit raps in the lighted room?\n\nA. With a wooden sole in her shoe, rapping with a foot slipped out of its slipper.\nB. With her thumbs hooked under the edge of the console table.\nC. An accomplice knocked from behind the fireplace.\nD. By freeing one hand while the two men beside her held each other's hands.\nE. By shaking the keys Mr. Crosby had handed to the butler.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "A"
+  ],
+  "evidence": [
+   "D1:228"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0002",
+  "qa_type": "single_choice",
+  "stem": "Where were the keys to the room during the séance?",
+  "option": [
+   "A. In Mr. Crosby's own pocket, exactly as he first proposed.",
+   "B. On the table beside William's lamp.",
+   "C. With Mason, who had asked to lock the doors himself.",
+   "D. With Mr. Wales, who had arranged the evening.",
+   "E. In the pocket of Pollock, who locked the last door from outside and stayed there until told to open it.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "Where were the keys to the room during the séance?\n\nA. In Mr. Crosby's own pocket, exactly as he first proposed.\nB. On the table beside William's lamp.\nC. With Mason, who had asked to lock the doors himself.\nD. With Mr. Wales, who had arranged the evening.\nE. In the pocket of Pollock, who locked the last door from outside and stayed there until told to open it.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "E"
+  ],
+  "evidence": [
+   "D1:415",
+   "D1:419",
+   "D1:420"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0003",
+  "qa_type": "single_choice",
+  "stem": "What was Madame la Grange tied to her chair with, and whose were they?",
+  "option": [
+   "A. Curtain cords that William pulled from the window.",
+   "B. A rope that Pollock fetched from the hall.",
+   "C. Handkerchiefs belonging to Crosby, William, Mason and Trent.",
+   "D. Handkerchiefs belonging to Wales and Standish.",
+   "E. Her own gloves and the strap of her hand-bag.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What was Madame la Grange tied to her chair with, and whose were they?\n\nA. Curtain cords that William pulled from the window.\nB. A rope that Pollock fetched from the hall.\nC. Handkerchiefs belonging to Crosby, William, Mason and Trent.\nD. Handkerchiefs belonging to Wales and Standish.\nE. Her own gloves and the strap of her hand-bag.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "C"
+  ],
+  "evidence": [
+   "D1:478",
+   "D1:479",
+   "D1:480"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0004",
+  "qa_type": "single_choice",
+  "stem": "Where had Philip Mason been living for the last few years, and what does he do?",
+  "option": [
+   "A. In London; he is a banker.",
+   "B. In Paris; he is a painter.",
+   "C. In New York; he is a lawyer at 120 Broadway.",
+   "D. In Paris; he is a newspaper correspondent.",
+   "E. In Rome; he deals in antiques.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "Where had Philip Mason been living for the last few years, and what does he do?\n\nA. In London; he is a banker.\nB. In Paris; he is a painter.\nC. In New York; he is a lawyer at 120 Broadway.\nD. In Paris; he is a newspaper correspondent.\nE. In Rome; he deals in antiques.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "B"
+  ],
+  "evidence": [
+   "D2:159"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0005",
+  "qa_type": "single_choice",
+  "stem": "Who offered a reward for discovering Spencer Lee's murderers, and how much was it?",
+  "option": [
+   "A. The police; one thousand dollars.",
+   "B. Roscoe Crosby; five thousand dollars.",
+   "C. Howard Standish; five thousand dollars.",
+   "D. Edward Wales; ten thousand dollars.",
+   "E. Edward Wales; five thousand dollars.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "Who offered a reward for discovering Spencer Lee's murderers, and how much was it?\n\nA. The police; one thousand dollars.\nB. Roscoe Crosby; five thousand dollars.\nC. Howard Standish; five thousand dollars.\nD. Edward Wales; ten thousand dollars.\nE. Edward Wales; five thousand dollars.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "E"
+  ],
+  "evidence": [
+   "D1:368",
+   "D1:370"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0006",
+  "qa_type": "single_choice",
+  "stem": "What does Howard Standish say about himself when the Inspector asks who he is?",
+  "option": [
+   "A. That he is of Standish, Giles & Updegraff, 120 Broadway, and that his brother is a Supreme Court judge.",
+   "B. That he is a painter who has just come back from Paris.",
+   "C. That he is the son of the banker Edward Erskine.",
+   "D. That he is Mrs. Crosby's private secretary.",
+   "E. That he is Mr. Crosby's son-in-law and lives in the house.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What does Howard Standish say about himself when the Inspector asks who he is?\n\nA. That he is of Standish, Giles & Updegraff, 120 Broadway, and that his brother is a Supreme Court judge.\nB. That he is a painter who has just come back from Paris.\nC. That he is the son of the banker Edward Erskine.\nD. That he is Mrs. Crosby's private secretary.\nE. That he is Mr. Crosby's son-in-law and lives in the house.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "A"
+  ],
+  "evidence": [
+   "D2:111"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0007",
+  "qa_type": "single_choice",
+  "stem": "When the Inspector had the circle rebuilt, which seating error was corrected?",
+  "option": [
+   "A. Mason and Trent had been put in each other's chairs.",
+   "B. Mrs. Crosby had been placed next to Mr. Wales instead of Mrs. Trent.",
+   "C. William had been placed away from the lamp.",
+   "D. Helen O'Neill and Miss Eastwood had been put in each other's chairs; Helen had really sat next to Mr. Wales.",
+   "E. Standish had been left outside the circle.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "When the Inspector had the circle rebuilt, which seating error was corrected?\n\nA. Mason and Trent had been put in each other's chairs.\nB. Mrs. Crosby had been placed next to Mr. Wales instead of Mrs. Trent.\nC. William had been placed away from the lamp.\nD. Helen O'Neill and Miss Eastwood had been put in each other's chairs; Helen had really sat next to Mr. Wales.\nE. Standish had been left outside the circle.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "D"
+  ],
+  "evidence": [
+   "D2:261",
+   "D2:262",
+   "D2:263"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0008",
+  "qa_type": "single_choice",
+  "stem": "What best explains why Madame la Grange pointed Helen O'Neill to the wrong chair?",
+  "option": [
+   "A. She honestly could not remember the order after her trance.",
+   "B. Mr. Crosby had asked her to keep his son's fiancée out of it.",
+   "C. She wanted the Inspector not to learn that the girl, her own daughter, had sat next to Mr. Wales.",
+   "D. She wanted to throw suspicion on Miss Eastwood, who had mocked her.",
+   "E. She was testing whether the Inspector was paying attention.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What best explains why Madame la Grange pointed Helen O'Neill to the wrong chair?\n\nA. She honestly could not remember the order after her trance.\nB. Mr. Crosby had asked her to keep his son's fiancée out of it.\nC. She wanted the Inspector not to learn that the girl, her own daughter, had sat next to Mr. Wales.\nD. She wanted to throw suspicion on Miss Eastwood, who had mocked her.\nE. She was testing whether the Inspector was paying attention.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "C"
+  ],
+  "evidence": [
+   "D2:265",
+   "D2:397",
+   "D2:421"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0009",
+  "qa_type": "single_choice",
+  "stem": "Which objects does the Inspector produce to match Helen O'Neill's finger-prints?",
+  "option": [
+   "A. A wine glass from the dinner table and one of her letters.",
+   "B. The handle of the knife and Mr. Wales' glove.",
+   "C. The door keys and a teaspoon.",
+   "D. A hand-bag and a visiting card.",
+   "E. A cup and saucer taken from Spencer Lee's rooms and the envelope of a note he had just sent her.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "Which objects does the Inspector produce to match Helen O'Neill's finger-prints?\n\nA. A wine glass from the dinner table and one of her letters.\nB. The handle of the knife and Mr. Wales' glove.\nC. The door keys and a teaspoon.\nD. A hand-bag and a visiting card.\nE. A cup and saucer taken from Spencer Lee's rooms and the envelope of a note he had just sent her.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "E"
+  ],
+  "evidence": [
+   "D3:141"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0010",
+  "qa_type": "single_choice",
+  "stem": "According to Helen O'Neill, what happened when she called on Spencer Lee?",
+  "option": [
+   "A. He refused to give up the letters and she left without them.",
+   "B. They had tea first, and only afterwards did he hand over the letters.",
+   "C. Once he saw that she knew about the letters and would tell Mr. Crosby, he gave them to her; then, at his request, she stayed for tea and afterwards took the letters home to Mrs. Trent.",
+   "D. She found him already dead and took the letters from his coat.",
+   "E. She bought the letters back with money from Mrs. Crosby.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "According to Helen O'Neill, what happened when she called on Spencer Lee?\n\nA. He refused to give up the letters and she left without them.\nB. They had tea first, and only afterwards did he hand over the letters.\nC. Once he saw that she knew about the letters and would tell Mr. Crosby, he gave them to her; then, at his request, she stayed for tea and afterwards took the letters home to Mrs. Trent.\nD. She found him already dead and took the letters from his coat.\nE. She bought the letters back with money from Mrs. Crosby.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "C"
+  ],
+  "evidence": [
+   "D3:207",
+   "D3:211",
+   "D3:214"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0011",
+  "qa_type": "single_choice",
+  "stem": "How does Mason say he killed Spencer Lee?",
+  "option": [
+   "A. He stabbed him while they were shaking hands.",
+   "B. He shot him with Lee's own revolver.",
+   "C. He stood in the doorway, said he had come to kill him, and threw the knife into his back as Lee ran for his revolver.",
+   "D. He put poison in his tea.",
+   "E. He struck him down in a quarrel about a package of letters.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "How does Mason say he killed Spencer Lee?\n\nA. He stabbed him while they were shaking hands.\nB. He shot him with Lee's own revolver.\nC. He stood in the doorway, said he had come to kill him, and threw the knife into his back as Lee ran for his revolver.\nD. He put poison in his tea.\nE. He struck him down in a quarrel about a package of letters.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "C"
+  ],
+  "evidence": [
+   "D3:415"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0012",
+  "qa_type": "single_choice",
+  "stem": "What is the name of the woman Mason says Spencer Lee took away from him?",
+  "option": [
+   "A. Helen Trent.",
+   "B. Helen O'Neill.",
+   "C. Alicia.",
+   "D. Grace.",
+   "E. Elizabeth.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What is the name of the woman Mason says Spencer Lee took away from him?\n\nA. Helen Trent.\nB. Helen O'Neill.\nC. Alicia.\nD. Grace.\nE. Elizabeth.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "F"
+  ],
+  "evidence": [
+   "D3:413"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0013",
+  "qa_type": "single_choice",
+  "stem": "What did the Coroner, Dr. Bernstein, conclude after examining Mr. Wales' body?",
+  "option": [
+   "A. That the knife had gone clean into the heart and death was instant.",
+   "B. That the wound could not have been made by someone seated in the circle.",
+   "C. That Mr. Wales had died of shock before he was stabbed.",
+   "D. That the blow had been struck by a left-handed person.",
+   "E. That the body had been moved after death.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What did the Coroner, Dr. Bernstein, conclude after examining Mr. Wales' body?\n\nA. That the knife had gone clean into the heart and death was instant.\nB. That the wound could not have been made by someone seated in the circle.\nC. That Mr. Wales had died of shock before he was stabbed.\nD. That the blow had been struck by a left-handed person.\nE. That the body had been moved after death.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "F"
+  ],
+  "evidence": [
+   "D2:122",
+   "D2:182"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0014",
+  "qa_type": "single_choice",
+  "stem": "According to Mr. Wales, when was Spencer Lee killed in relation to Mason's return from France?",
+  "option": [
+   "A. About a year before Mason came back.",
+   "B. A day or two after Mason got home.",
+   "C. On the night Mason sailed for France.",
+   "D. Several months before, while Mason was still in Paris.",
+   "E. On the very day of the séance.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "According to Mr. Wales, when was Spencer Lee killed in relation to Mason's return from France?\n\nA. About a year before Mason came back.\nB. A day or two after Mason got home.\nC. On the night Mason sailed for France.\nD. Several months before, while Mason was still in Paris.\nE. On the very day of the séance.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "B"
+  ],
+  "evidence": [
+   "D1:359"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0015",
+  "qa_type": "single_choice",
+  "stem": "What had been Spencer Lee's connection with the Crosby household?",
+  "option": [
+   "A. He had been Mr. Crosby's business partner.",
+   "B. He had been William's friend at college.",
+   "C. He was a cousin of Mrs. Crosby.",
+   "D. He used to come to the house a good deal and wanted to marry the Crosbys' daughter, but dropped away after she married Trent.",
+   "E. He had once employed Helen O'Neill as his secretary.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "What had been Spencer Lee's connection with the Crosby household?\n\nA. He had been Mr. Crosby's business partner.\nB. He had been William's friend at college.\nC. He was a cousin of Mrs. Crosby.\nD. He used to come to the house a good deal and wanted to marry the Crosbys' daughter, but dropped away after she married Trent.\nE. He had once employed Helen O'Neill as his secretary.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "D"
+  ],
+  "evidence": [
+   "D1:363",
+   "D3:274"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0016",
+  "qa_type": "single_choice",
+  "stem": "How many people sat in the circle, and who pointed the number out?",
+  "option": [
+   "A. Twelve; Mason.",
+   "B. Thirteen; Mrs. Crosby.",
+   "C. Fourteen; Miss Eastwood.",
+   "D. Eleven; Trent.",
+   "E. Thirteen; Miss Erskine, who told Mr. Wales not to sit there.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "How many people sat in the circle, and who pointed the number out?\n\nA. Twelve; Mason.\nB. Thirteen; Mrs. Crosby.\nC. Fourteen; Miss Eastwood.\nD. Eleven; Trent.\nE. Thirteen; Miss Erskine, who told Mr. Wales not to sit there.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "E"
+  ],
+  "evidence": [
+   "D1:449"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0017",
+  "qa_type": "single_choice",
+  "stem": "The Inspector says, \"I thought perhaps I'd get it that way.\" What had he just done, and why?",
+  "option": [
+   "A. He had lost his temper for a moment and was apologising for it.",
+   "B. He had roughly threatened the medium on purpose, to make the girl give away that she was her daughter.",
+   "C. He had pretended to arrest Standish in order to frighten the others.",
+   "D. He had shown Mr. Wales' notes in order to make William confess.",
+   "E. He had sent for the matron in order to make Mrs. Trent speak.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "The Inspector says, \"I thought perhaps I'd get it that way.\" What had he just done, and why?\n\nA. He had lost his temper for a moment and was apologising for it.\nB. He had roughly threatened the medium on purpose, to make the girl give away that she was her daughter.\nC. He had pretended to arrest Standish in order to frighten the others.\nD. He had shown Mr. Wales' notes in order to make William confess.\nE. He had sent for the matron in order to make Mrs. Trent speak.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "B"
+  ],
+  "evidence": [
+   "D2:403",
+   "D2:404",
+   "D2:406"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0018",
+  "qa_type": "single_choice",
+  "stem": "After the second trance Madame la Grange says, \"Well, any'ow it was a good séance.\" What had it achieved?",
+  "option": [
+   "A. The spirits had finally told her the murderer's name.",
+   "B. Miss Eastwood's fainting had proved that she was guilty.",
+   "C. The Inspector had been convinced of her powers and let her daughter go.",
+   "D. Her staged trance had shown her whom to suspect: the glove she flung struck Mason, who picked it up and dropped it.",
+   "E. She had found where the knife was hidden.",
+   "F. Cannot infer the answer based on the given information."
+  ],
+  "question": "After the second trance Madame la Grange says, \"Well, any'ow it was a good séance.\" What had it achieved?\n\nA. The spirits had finally told her the murderer's name.\nB. Miss Eastwood's fainting had proved that she was guilty.\nC. The Inspector had been convinced of her powers and let her daughter go.\nD. Her staged trance had shown her whom to suspect: the glove she flung struck Mason, who picked it up and dropped it.\nE. She had found where the knife was hidden.\nF. Cannot infer the answer based on the given information.\n\nPlease provide the option corresponding to the only correct answer, enclosed in parentheses, e.g., (X).",
+  "answer_letters": [
+   "D"
+  ],
+  "evidence": [
+   "D3:342",
+   "D3:343",
+   "D3:358",
+   "D3:359"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0019",
+  "qa_type": "multi_select",
+  "stem": "Which of her tricks did Madame la Grange herself explain to the company in the first act?",
+  "option": [
+   "A. Rapping with a wooden sole in her shoe.",
+   "B. Imitating a dead man's voice by ventriloquism.",
+   "C. Lifting a small table with her thumbs under its edge.",
+   "D. Slipping out of the circle so that the two men beside her held each other's hands.",
+   "E. Learning about \"Jimmy at the Ritz\" from a letter left in a bag in the hall.",
+   "F. Hiding a knife in her sleeve."
+  ],
+  "question": "Which of her tricks did Madame la Grange herself explain to the company in the first act?\n\nA. Rapping with a wooden sole in her shoe.\nB. Imitating a dead man's voice by ventriloquism.\nC. Lifting a small table with her thumbs under its edge.\nD. Slipping out of the circle so that the two men beside her held each other's hands.\nE. Learning about \"Jimmy at the Ritz\" from a letter left in a bag in the hall.\nF. Hiding a knife in her sleeve.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "D",
+   "E"
+  ],
+  "evidence": [
+   "D1:228",
+   "D1:243",
+   "D1:474",
+   "D1:166"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0020",
+  "qa_type": "multi_select",
+  "stem": "Which of these first names were established when the Inspector asked the women for them?",
+  "option": [
+   "A. Miss Eastwood is Mary.",
+   "B. Miss Erskine is Elizabeth.",
+   "C. Mrs. Crosby is Helen.",
+   "D. Miss Standish is Grace.",
+   "E. Miss O'Neill is Nora.",
+   "F. Mrs. Trent is Helen."
+  ],
+  "question": "Which of these first names were established when the Inspector asked the women for them?\n\nA. Miss Eastwood is Mary.\nB. Miss Erskine is Elizabeth.\nC. Mrs. Crosby is Helen.\nD. Miss Standish is Grace.\nE. Miss O'Neill is Nora.\nF. Mrs. Trent is Helen.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "B",
+   "D",
+   "F"
+  ],
+  "evidence": [
+   "D2:372",
+   "D2:374",
+   "D2:376",
+   "D2:378",
+   "D2:380",
+   "D2:382"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0021",
+  "qa_type": "multi_select",
+  "stem": "Where was the missing knife looked for, without success, before it was finally seen?",
+  "option": [
+   "A. In the chimney, by a policeman who came down covered in soot.",
+   "B. In the garden under the window, by Doolan.",
+   "C. Under the rugs and inside the upholstery of the furniture.",
+   "D. On the guests themselves, searched by Sergeant Dunn and a police matron.",
+   "E. In the pockets of Mr. Wales' overcoat.",
+   "F. In the sideboard of the dining-room."
+  ],
+  "question": "Where was the missing knife looked for, without success, before it was finally seen?\n\nA. In the chimney, by a policeman who came down covered in soot.\nB. In the garden under the window, by Doolan.\nC. Under the rugs and inside the upholstery of the furniture.\nD. On the guests themselves, searched by Sergeant Dunn and a police matron.\nE. In the pockets of Mr. Wales' overcoat.\nF. In the sideboard of the dining-room.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "D"
+  ],
+  "evidence": [
+   "D3:34",
+   "D3:37",
+   "D3:53",
+   "D2:329",
+   "D2:419"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0022",
+  "qa_type": "multi_select",
+  "stem": "Which statements about where people sat at the séance are correct?",
+  "option": [
+   "A. William sat beside the medium, within reach of the lamp.",
+   "B. Mason sat next to Mr. Crosby.",
+   "C. Mr. Wales sat between Helen O'Neill and Mrs. Trent.",
+   "D. Miss Eastwood sat next to Mr. Wales.",
+   "E. Mrs. Crosby sat between Standish and William.",
+   "F. Miss Erskine sat next to Mr. Crosby."
+  ],
+  "question": "Which statements about where people sat at the séance are correct?\n\nA. William sat beside the medium, within reach of the lamp.\nB. Mason sat next to Mr. Crosby.\nC. Mr. Wales sat between Helen O'Neill and Mrs. Trent.\nD. Miss Eastwood sat next to Mr. Wales.\nE. Mrs. Crosby sat between Standish and William.\nF. Miss Erskine sat next to Mr. Crosby.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "E",
+   "F"
+  ],
+  "evidence": [
+   "D1:431",
+   "D1:434",
+   "D1:450",
+   "D2:258",
+   "D2:263",
+   "D2:226"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0023",
+  "qa_type": "multi_select",
+  "stem": "Which statements did Mrs. Trent make when the Inspector questioned her about Spencer Lee?",
+  "option": [
+   "A. She never asked Helen O'Neill to go to his rooms.",
+   "B. She had seen Helen O'Neill writing to him.",
+   "C. She never wrote him a letter in her life.",
+   "D. He had wanted to marry her, but she did not like him.",
+   "E. Her husband had known about the letters all along.",
+   "F. She had not seen him for two or three years."
+  ],
+  "question": "Which statements did Mrs. Trent make when the Inspector questioned her about Spencer Lee?\n\nA. She never asked Helen O'Neill to go to his rooms.\nB. She had seen Helen O'Neill writing to him.\nC. She never wrote him a letter in her life.\nD. He had wanted to marry her, but she did not like him.\nE. Her husband had known about the letters all along.\nF. She had not seen him for two or three years.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "D",
+   "F"
+  ],
+  "evidence": [
+   "D3:258",
+   "D3:263",
+   "D3:267",
+   "D3:271",
+   "D3:274"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0024",
+  "qa_type": "multi_select",
+  "stem": "According to the Inspector, which things had he and Mr. Wales arranged before the séance?",
+  "option": [
+   "A. The exact wording of the messages that were to seem to come from Spencer Lee.",
+   "B. That a police matron would wait in the next room.",
+   "C. That the medium would speak a woman's first name when asked who the killer was.",
+   "D. That Mr. Crosby would be told of the plan beforehand.",
+   "E. That the plan rested on Wales' belief that a woman had killed Lee to get her letters back.",
+   "F. That the knife would be found on the suspect."
+  ],
+  "question": "According to the Inspector, which things had he and Mr. Wales arranged before the séance?\n\nA. The exact wording of the messages that were to seem to come from Spencer Lee.\nB. That a police matron would wait in the next room.\nC. That the medium would speak a woman's first name when asked who the killer was.\nD. That Mr. Crosby would be told of the plan beforehand.\nE. That the plan rested on Wales' belief that a woman had killed Lee to get her letters back.\nF. That the knife would be found on the suspect.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "E"
+  ],
+  "evidence": [
+   "D2:351",
+   "D2:353",
+   "D2:360",
+   "D2:366"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0025",
+  "qa_type": "multi_select",
+  "stem": "Which of these precautions did Roscoe Crosby himself take or order before the séance?",
+  "option": [
+   "A. He asked for the window to be fastened.",
+   "B. He proposed that the medium be searched.",
+   "C. He told William to turn on the light the moment he called for it.",
+   "D. He had Pollock lock the last door from outside and keep the keys.",
+   "E. He tied the medium's hands and ankles to her chair.",
+   "F. He offered a reward to anyone who exposed her."
+  ],
+  "question": "Which of these precautions did Roscoe Crosby himself take or order before the séance?\n\nA. He asked for the window to be fastened.\nB. He proposed that the medium be searched.\nC. He told William to turn on the light the moment he called for it.\nD. He had Pollock lock the last door from outside and keep the keys.\nE. He tied the medium's hands and ankles to her chair.\nF. He offered a reward to anyone who exposed her.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "D",
+   "E"
+  ],
+  "evidence": [
+   "D1:314",
+   "D1:318",
+   "D1:390",
+   "D1:415",
+   "D1:419",
+   "D1:481",
+   "D1:491"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0026",
+  "qa_type": "multi_select",
+  "stem": "Which things does Mason say in his confession?",
+  "option": [
+   "A. That he killed both Spencer Lee and Mr. Wales.",
+   "B. That Mrs. Trent had asked him to get her letters back.",
+   "C. That he killed Mr. Wales because he was afraid Wales would find out.",
+   "D. That Lee had taken away a woman he loved, who later died.",
+   "E. That he had written the compromising letters himself.",
+   "F. That he threw the knife into the ceiling."
+  ],
+  "question": "Which things does Mason say in his confession?\n\nA. That he killed both Spencer Lee and Mr. Wales.\nB. That Mrs. Trent had asked him to get her letters back.\nC. That he killed Mr. Wales because he was afraid Wales would find out.\nD. That Lee had taken away a woman he loved, who later died.\nE. That he had written the compromising letters himself.\nF. That he threw the knife into the ceiling.\n\nPlease provide all correct options enclosed in parentheses, separated by commas, e.g., (X, Y, Z). No points will be awarded for incomplete or incorrect selections.",
+  "answer_letters": [
+   "A",
+   "C",
+   "D",
+   "F"
+  ],
+  "evidence": [
+   "D3:403",
+   "D3:405",
+   "D3:407",
+   "D3:413",
+   "D3:415"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0027",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments of the first act in the order in which they happen.",
+  "option": [
+   "A. Mr. Crosby ties the medium to her chair with handkerchiefs.",
+   "B. Mr. Wales declines to congratulate William and Helen.",
+   "C. Mr. Wales tells the men he means to find out who killed Spencer Lee.",
+   "D. Madame la Grange makes the small table rise with only her finger-tips on it.",
+   "E. The ladies go out with the medium so that she can be searched."
+  ],
+  "question": "Arrange these moments of the first act in the order in which they happen.\n\nA. Mr. Crosby ties the medium to her chair with handkerchiefs.\nB. Mr. Wales declines to congratulate William and Helen.\nC. Mr. Wales tells the men he means to find out who killed Spencer Lee.\nD. Madame la Grange makes the small table rise with only her finger-tips on it.\nE. The ladies go out with the medium so that she can be searched.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "D",
+   "E",
+   "C",
+   "A"
+  ],
+  "evidence": [
+   "D1:85",
+   "D1:249",
+   "D1:336",
+   "D1:344",
+   "D1:481"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0028",
+  "qa_type": "ordering",
+  "stem": "Arrange the Inspector's steps in the second act in order.",
+  "option": [
+   "A. He has the circle rebuilt and everyone seated as at the séance.",
+   "B. He arrests Standish as a material witness.",
+   "C. He orders everyone to be searched by Sergeant Dunn and the matron.",
+   "D. He unties Madame la Grange from her chair."
+  ],
+  "question": "Arrange the Inspector's steps in the second act in order.\n\nA. He has the circle rebuilt and everyone seated as at the séance.\nB. He arrests Standish as a material witness.\nC. He orders everyone to be searched by Sergeant Dunn and the matron.\nD. He unties Madame la Grange from her chair.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "D",
+   "B",
+   "A",
+   "C"
+  ],
+  "evidence": [
+   "D2:97",
+   "D2:114",
+   "D2:221",
+   "D2:329"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0029",
+  "qa_type": "ordering",
+  "stem": "Arrange these events of the third act in order.",
+  "option": [
+   "A. Mrs. Trent denies that she sent Helen O'Neill to Lee's rooms.",
+   "B. A policeman comes down the chimney, having found nothing.",
+   "C. The glove flung by Madame la Grange strikes Mason in the face.",
+   "D. The Inspector shows the cup, the saucer and the envelope with matching finger-prints.",
+   "E. The knife drops from the ceiling and sticks in the table."
+  ],
+  "question": "Arrange these events of the third act in order.\n\nA. Mrs. Trent denies that she sent Helen O'Neill to Lee's rooms.\nB. A policeman comes down the chimney, having found nothing.\nC. The glove flung by Madame la Grange strikes Mason in the face.\nD. The Inspector shows the cup, the saucer and the envelope with matching finger-prints.\nE. The knife drops from the ceiling and sticks in the table.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "D",
+   "A",
+   "C",
+   "E"
+  ],
+  "evidence": [
+   "D3:34",
+   "D3:141",
+   "D3:258",
+   "D3:342",
+   "D3:399"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0030",
+  "qa_type": "ordering",
+  "stem": "Trace how suspicion moved during the evening: arrange these in order.",
+  "option": [
+   "A. Miss Eastwood suggests that the medium could have slipped out of the circle and back.",
+   "B. The Inspector announces that Helen O'Neill is the woman the police have been hunting.",
+   "C. Mason confesses.",
+   "D. Mr. Crosby tells the others that one of the people in the room must have killed Wales."
+  ],
+  "question": "Trace how suspicion moved during the evening: arrange these in order.\n\nA. Miss Eastwood suggests that the medium could have slipped out of the circle and back.\nB. The Inspector announces that Helen O'Neill is the woman the police have been hunting.\nC. Mason confesses.\nD. Mr. Crosby tells the others that one of the people in the room must have killed Wales.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "D",
+   "A",
+   "B",
+   "C"
+  ],
+  "evidence": [
+   "D2:20",
+   "D2:81",
+   "D2:85",
+   "D3:136",
+   "D3:403"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0031",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments in the order in which they happen.",
+  "option": [
+   "A. Miss Eastwood screams that there is a hand on her face.",
+   "B. Madame la Grange recognises Helen O'Neill and speaks to her in an undertone.",
+   "C. Pollock locks the last door from the outside.",
+   "D. Madame la Grange advises Miss Eastwood not to meet Jimmy at the Ritz."
+  ],
+  "question": "Arrange these moments in the order in which they happen.\n\nA. Miss Eastwood screams that there is a hand on her face.\nB. Madame la Grange recognises Helen O'Neill and speaks to her in an undertone.\nC. Pollock locks the last door from the outside.\nD. Madame la Grange advises Miss Eastwood not to meet Jimmy at the Ritz.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "D",
+   "B",
+   "C",
+   "A"
+  ],
+  "evidence": [
+   "D1:153",
+   "D1:276",
+   "D1:421",
+   "D1:467"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0032",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments of the séance and its aftermath in order.",
+  "option": [
+   "A. Mr. Wales cries out about his back.",
+   "B. A man's voice calls for Ned.",
+   "C. Mr. Crosby tells Pollock to telephone Police Headquarters.",
+   "D. The message about the swimming pool is given.",
+   "E. Trent says that Mr. Wales is dead."
+  ],
+  "question": "Arrange these moments of the séance and its aftermath in order.\n\nA. Mr. Wales cries out about his back.\nB. A man's voice calls for Ned.\nC. Mr. Crosby tells Pollock to telephone Police Headquarters.\nD. The message about the swimming pool is given.\nE. Trent says that Mr. Wales is dead.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "D",
+   "A",
+   "C",
+   "E"
+  ],
+  "evidence": [
+   "D1:508",
+   "D1:515",
+   "D1:536",
+   "D1:549",
+   "D1:556"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0033",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments after the Inspector arrives in order.",
+  "option": [
+   "A. Standish begs the Inspector's pardon for acting like a fool.",
+   "B. Miss Eastwood explains how the medium got out of the circle.",
+   "C. The Inspector takes out his watch and waits for a confession.",
+   "D. Sergeant Dunn reports that Dr. Bernstein is on his way."
+  ],
+  "question": "Arrange these moments after the Inspector arrives in order.\n\nA. Standish begs the Inspector's pardon for acting like a fool.\nB. Miss Eastwood explains how the medium got out of the circle.\nC. The Inspector takes out his watch and waits for a confession.\nD. Sergeant Dunn reports that Dr. Bernstein is on his way.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "C",
+   "B",
+   "A",
+   "D"
+  ],
+  "evidence": [
+   "D2:78",
+   "D2:83",
+   "D2:115",
+   "D2:122"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0034",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments of the Inspector's questioning in order.",
+  "option": [
+   "A. Helen O'Neill cries, \"Let my mother alone.\"",
+   "B. The Inspector reads the prepared messages aloud from a paper.",
+   "C. The Inspector asks each of the women for her first name.",
+   "D. Sergeant Dunn reports that the knife was not on either of the two people searched."
+  ],
+  "question": "Arrange these moments of the Inspector's questioning in order.\n\nA. Helen O'Neill cries, \"Let my mother alone.\"\nB. The Inspector reads the prepared messages aloud from a paper.\nC. The Inspector asks each of the women for her first name.\nD. Sergeant Dunn reports that the knife was not on either of the two people searched.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "C",
+   "A",
+   "D"
+  ],
+  "evidence": [
+   "D2:358",
+   "D2:371",
+   "D2:404",
+   "D2:419"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0035",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments in order.",
+  "option": [
+   "A. Doolan reports through the window that the woman threw nothing out.",
+   "B. Madame la Grange prays for guidance.",
+   "C. Helen O'Neill refuses to answer the Inspector's questions.",
+   "D. Mr. Crosby tells the Inspector to regard the house as his own."
+  ],
+  "question": "Arrange these moments in order.\n\nA. Doolan reports through the window that the woman threw nothing out.\nB. Madame la Grange prays for guidance.\nC. Helen O'Neill refuses to answer the Inspector's questions.\nD. Mr. Crosby tells the Inspector to regard the house as his own.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "A",
+   "D",
+   "C"
+  ],
+  "evidence": [
+   "D3:3",
+   "D3:61",
+   "D3:65",
+   "D3:73",
+   "D3:101",
+   "D3:107"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0036",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments in order.",
+  "option": [
+   "A. Helen O'Neill admits that she went to Spencer Lee's rooms.",
+   "B. Helen O'Neill says that Mrs. Trent sent her for some letters.",
+   "C. Madame la Grange dares the Inspector to compare her daughter's finger-prints.",
+   "D. The Inspector gives Madame la Grange ten minutes."
+  ],
+  "question": "Arrange these moments in order.\n\nA. Helen O'Neill admits that she went to Spencer Lee's rooms.\nB. Helen O'Neill says that Mrs. Trent sent her for some letters.\nC. Madame la Grange dares the Inspector to compare her daughter's finger-prints.\nD. The Inspector gives Madame la Grange ten minutes.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "C",
+   "A",
+   "B",
+   "D"
+  ],
+  "evidence": [
+   "D3:119",
+   "D3:152",
+   "D3:195",
+   "D3:198",
+   "D3:300"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0037",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments in order.",
+  "option": [
+   "A. Pollock knocks twice at the door.",
+   "B. Standish slips quietly out of the room.",
+   "C. William fetches a glove from Mr. Wales' overcoat.",
+   "D. Mason cries that he cannot fight the dead.",
+   "E. Mrs. Trent tells her father that she lied."
+  ],
+  "question": "Arrange these moments in order.\n\nA. Pollock knocks twice at the door.\nB. Standish slips quietly out of the room.\nC. William fetches a glove from Mr. Wales' overcoat.\nD. Mason cries that he cannot fight the dead.\nE. Mrs. Trent tells her father that she lied.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "C",
+   "B",
+   "A",
+   "D",
+   "E"
+  ],
+  "evidence": [
+   "D3:310",
+   "D3:343",
+   "D3:372",
+   "D3:400",
+   "D3:433"
+  ]
+ },
+ {
+  "qa_id": "proxy:conv-0#q0038",
+  "qa_type": "ordering",
+  "stem": "Arrange these moments from the whole evening in order.",
+  "option": [
+   "A. The Inspector unties Madame la Grange.",
+   "B. Madame la Grange shows the wooden sole in her shoe.",
+   "C. A policeman comes down the chimney.",
+   "D. Mr. Wales says that he offered the reward himself.",
+   "E. The Inspector remarks that there are two Helens."
+  ],
+  "question": "Arrange these moments from the whole evening in order.\n\nA. The Inspector unties Madame la Grange.\nB. Madame la Grange shows the wooden sole in her shoe.\nC. A policeman comes down the chimney.\nD. Mr. Wales says that he offered the reward himself.\nE. The Inspector remarks that there are two Helens.\n\nPlease provide the options in the correct order enclosed in parentheses, separated by commas, e.g., (Y, Z, X, W). No points will be awarded for an incorrect sequence.",
+  "answer_letters": [
+   "B",
+   "D",
+   "A",
+   "E",
+   "C"
+  ],
+  "evidence": [
+   "D1:228",
+   "D1:370",
+   "D2:97",
+   "D2:384",
+   "D3:34"
+  ]
+ }
+]

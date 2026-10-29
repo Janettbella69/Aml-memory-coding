@@ -1,0 +1,26 @@
+# Caddy terminates TLS (automatic certificates) and proxies to the memory container.
+# MEMORY_DOMAIN comes from .env (e.g. memory.example.com); ports 80/443 must be reachable.
+# MEMORY_ALT_DOMAIN is optional: a second hostname served by the same block (e.g. the IP-based
+# 47-77-196-181.sslip.io, which needs no DNS setup). Empty = only MEMORY_DOMAIN. Certificates are
+# obtained per name, so one name failing validation does not affect the other.
+{$MEMORY_DOMAIN} {$MEMORY_ALT_DOMAIN} {
+    encode gzip
+    reverse_proxy memory:8000 {
+        transport http {
+            read_timeout 1800s
+            write_timeout 1800s
+        }
+    }
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 50mb
+            roll_keep 3
+        }
+        format json
+    }
+}
+
+# Other sites that share this box's ports 80/443 (optional). Each deploy/sites/*.caddy file is
+# a complete site block for an unrelated app. The directory is git-ignored and empty on a
+# memory-only box, where this line matches nothing.
+import sites/*.caddy
