@@ -121,6 +121,7 @@ def main() -> None:
     ap.add_argument("-v", "--verbose", action="store_true", help="one line per question")
     args = ap.parse_args()
 
+    from app.cardselect import card_selector_from_env
     from app.config import Settings
     from app.embed import embedder_from_env, to_blob
     from app.models import AddRequest
@@ -129,6 +130,7 @@ def main() -> None:
     from app.search import search
     from app.selector import selector_from_env
     from app.store import MemoryStore
+    from app.summarize import summarizer_from_env
 
     tmp = tempfile.TemporaryDirectory() if not args.data_dir else None
     data_dir = args.data_dir or os.path.join(tmp.name, "d")
@@ -138,6 +140,8 @@ def main() -> None:
     embedder = embedder_from_env(settings.embed_model, settings.embed_dims, settings.embed_timeout, settings.embed_rps)
     selector = selector_from_env(settings.selector_model, settings.selector_timeout, settings.selector_max_select, settings.selector_block_chars)
     reranker = reranker_from_env(settings.rerank_provider, settings.rerank_model, settings.rerank_timeout, settings.rerank_doc_chars)
+    summarizer = summarizer_from_env(settings.summary_model, settings.summary_timeout, settings.summary_chars, settings.summary_cache)
+    card_selector = card_selector_from_env(settings.card_select_model, settings.card_select_timeout)
 
     # ---- past experience -> Add
     transcripts = sorted(Path(args.cases).glob("*.jsonl"))
@@ -162,7 +166,8 @@ def main() -> None:
             if embedder is not None:
                 vectors = [to_blob(v) if v is not None else None for v in embedder.embed([m.text() for m in payload.messages])]
                 identity = (embedder.model, embedder.dims)
-            turns += store.add(payload, vectors, identity)
+            summary = summarizer.summarize(payload.messages) if summarizer is not None else None
+            turns += store.add(payload, vectors, identity, summary)
             adds += 1
             chars += sum(len(m["content"]) for m in part)
     add_seconds = time.time() - t0
@@ -171,6 +176,7 @@ def main() -> None:
     session_of_id: dict[str, tuple[str, int]] = {}
     opening: dict[str, str] = {}
     closing: dict[str, str] = {}
+    summary_of: dict[str, str] = {}
     kind_of_id: dict[str, str] = {}
     role_of_id: dict[str, str] = {}
     chars_of_id: dict[str, int] = {}
@@ -181,6 +187,12 @@ def main() -> None:
             for row in conn.execute("SELECT id, session_id, pos, role, substr(content, 1, 14) AS head, length(content) AS n"
                                     " FROM memories ORDER BY session_id, pos"):
                 session_of_id[row["id"]] = (row["session_id"], row["pos"])
+                if row["role"] == "summary":
+                    summary_of[row["session_id"]] = row["id"]
+                    kind_of_id[row["id"]] = "summary"
+                    role_of_id[row["id"]] = row["role"]
+                    chars_of_id[row["id"]] = int(row["n"])
+                    continue
                 opening.setdefault(row["session_id"], row["id"])
                 if row["role"] == "assistant":
                     closing[row["session_id"]] = row["id"]       # rows come in pos order: the last assistant turn wins
@@ -210,7 +222,7 @@ def main() -> None:
             skipped += 1
             continue
         results = search(store, settings, task["problem_statement"], None, task["repo"], args.top_k,
-                         planner=planner, embedder=embedder, selector=selector, reranker=reranker)
+                         planner=planner, embedder=embedder, selector=selector, reranker=reranker, card_selector=card_selector)
         sessions = [session_of_id.get(r.id, ("?", 0))[0] for r in results]
         rank = next((i + 1 for i, s in enumerate(sessions) if s in expected), None)
         order: list[str] = []
@@ -221,6 +233,7 @@ def main() -> None:
         ids = {r.id for r in results}
         statement = any(opening.get(s) in ids for s in expected)
         closed = any(closing.get(s) in ids for s in expected)
+        summarised = any(summary_of.get(s) in ids for s in expected if s in summary_of)
         total = sum(len(r.content) for r in results)
         paired = sum(len(r.content) for r, s in zip(results, sessions) if s in expected)
         head_chars = head_paired = 0          # what a reader sees first: the paired share of the first HEAD_CHARS characters
@@ -235,7 +248,7 @@ def main() -> None:
         files_any = bool(files) and any(f in all_text for f in files)
         files_head = bool(files) and any(f in all_text[:HEAD_CHARS] for f in files)
         rows.append({"instance_id": task["instance_id"], "repo": task["repo"], "rank": rank, "session_rank": session_rank,
-                     "statement": statement, "closing": closed, "files_any": files_any, "files_head": files_head,
+                     "statement": statement, "closing": closed, "summary": summarised, "files_any": files_any, "files_head": files_head,
                      "results": len(results), "chars": total,
                      "paired_share": (paired / total) if total else 0.0,
                      "head_share": (head_paired / head_chars) if head_chars else 0.0,
@@ -269,6 +282,8 @@ def main() -> None:
         "session_hit@5": hit(5, key="session_rank"), "session_mrr": mrr(key="session_rank"),
         "statement": sum(1 for r in rows if r["statement"]) / n if n else 0.0,
         "closing": sum(1 for r in rows if r["closing"]) / n if n else 0.0,
+        "summary": sum(1 for r in rows if r["summary"]) / n if n else 0.0,
+        "summaries_stored": len(summary_of),
         "files_any": sum(1 for r in rows if r["files_any"]) / n if n else 0.0,
         "files_head": sum(1 for r in rows if r["files_head"]) / n if n else 0.0,
         "results_median": statistics.median(r["results"] for r in rows) if rows else 0,
@@ -285,6 +300,7 @@ def main() -> None:
     print(f"  paired session by session order: hit@1 {summary['session_hit@1']:.3f}  hit@3 {summary['session_hit@3']:.3f}  "
           f"hit@5 {summary['session_hit@5']:.3f}  MRR {summary['session_mrr']:.3f}")
     print(f"  its task statement returned: {summary['statement']:.3f}   its closing message returned: {summary['closing']:.3f}   "
+          f"its Add-time summary returned: {summary['summary']:.3f} ({summary['summaries_stored']} stored)   "
           f"results/question median {summary['results_median']:.0f}   "
           f"chars median {summary['chars_median']:,.0f}   paired share: whole list median {100 * summary['paired_share_median']:.0f}%, "
           f"first {HEAD_CHARS // 1000}k chars median {100 * summary['head_share_median']:.0f}%   "

@@ -34,6 +34,7 @@ from datetime import timedelta
 from contextlib import nullcontext
 from typing import Any, ContextManager, Optional
 
+from .cardselect import CardSelector
 from .codeterms import split_identifier
 from .config import Settings
 from .models import MemoryResult
@@ -195,7 +196,8 @@ def retrieval_text(query: str, options: list[str] | None, settings: Settings) ->
 def search(store: MemoryStore, settings: Settings, query: str, options: list[str] | None,
            user_id: str, top_k: int, planner: Optional[Planner] = None,
            gate: Optional[ContextManager] = None, embedder: Optional[Embedder] = None,
-           selector: Optional[Selector] = None, reranker: Optional[Reranker] = None) -> list[MemoryResult]:
+           selector: Optional[Selector] = None, reranker: Optional[Reranker] = None,
+           card_selector: Optional[CardSelector] = None) -> list[MemoryResult]:
     """Gated SQLite passes around the network calls (query embedding, planner, reranker, selector); network time never holds the gate."""
     meta: dict[str, Any] = {}
     stem, embedded = split_question(query)
@@ -204,6 +206,12 @@ def search(store: MemoryStore, settings: Settings, query: str, options: list[str
         options = embedded + [o for o in (dedupe_options("\n".join(embedded), options) or [])]
     options = dedupe_options(query, options)
     results = _retrieve(store, settings, query, options, user_id, top_k, planner, gate, embedder, meta)
+    cards = meta.get("cards") or []
+    if card_selector is not None and len(cards) >= 2:
+        shown = cards[:settings.card_select_max]
+        order = card_selector.rank(query, [meta["card_brief"][sid] for sid, _ in shown])   # outside the gate
+        if order:
+            results = reorder_cards(results, cards, order)
     if reranker is not None and len(results) >= settings.rerank_min_results:
         head = results[:settings.rerank_candidates]
         hit_text = meta.get("hit_text", {})
@@ -215,6 +223,20 @@ def search(store: MemoryStore, settings: Settings, query: str, options: list[str
         selection = selector.select(query, options, [r.content for r in candidates])   # outside the gate
         results = apply_selection(results, selection, meta.get("rule_ids", set()), settings)
     return cap_response(results, settings, meta)
+
+
+def reorder_cards(results: list[MemoryResult], cards: list[tuple[str, list[int]]], order: list[int]) -> list[MemoryResult]:
+    """Cards named by the selector (indices into `cards`) first, in its order; the other cards keep their order behind
+    them. Whole cards move; scores are re-issued so that order and score agree."""
+    chosen = [i for i in order if 0 <= i < len(cards)]
+    sequence = chosen + [i for i in range(len(cards)) if i not in chosen]
+    positions = [p for i in sequence for p in cards[i][1]]
+    placed = set(positions)
+    positions += [p for p in range(len(results)) if p not in placed]   # anything outside the cards (none in practice)
+    ordered = [results[p] for p in positions]
+    n = len(ordered)
+    return [MemoryResult(id=r.id, content=r.content, created_at=r.created_at, score=round(1.0 - i / n, 4))
+            for i, r in enumerate(ordered)]
 
 
 def cap_response(results: list[MemoryResult], settings: Settings, meta: dict[str, Any]) -> list[MemoryResult]:
@@ -463,6 +485,7 @@ def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, 
     sessions = {c.session_id for c, _ in hits}
     opening = store.openings(user_id, sessions, conn)
     closing = store.closings(user_id, sessions, conn) if settings.card_closing else {}
+    notes = store.summaries(user_id, sessions, conn)        # coding-0.2.0 Add-time summaries, if any were written
     score: dict[str, float] = {}
     first: dict[str, int] = {}
     members: dict[str, list[Chunk]] = {}
@@ -476,17 +499,21 @@ def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, 
     picked: list[tuple[Chunk, str]] = []
     visible: set[tuple[str, int]] = set()
     used = 0
+    cards: list[tuple[str, list[int]]] = []                 # (session, positions of its blocks in `picked`), for the card selector
+    briefs: dict[str, str] = {}
     for n, sid in enumerate(sorted(score, key=lambda k: (-score[k], first[k]))):
         if settings.card_sessions and n >= settings.card_sessions:
             break
         head = opening.get(sid)
         tail = closing.get(sid)
-        fixed = [c for c in (head, tail) if c is not None]
-        if tail is not None and head is not None and tail.id == head.id:
-            fixed = [head]
+        summary = notes.get(sid, [])[:2]
+        fixed = [c for c in (head, *summary, tail) if c is not None]
+        if head is not None and tail is not None and tail.id == head.id:
+            fixed = [head, *summary]
         fixed_ids = {c.id for c in fixed}
-        items: list[tuple[Chunk, bool]] = [(c, False) for c in fixed]     # the task as given, then the agent's closing message
+        items: list[tuple[Chunk, bool]] = [(c, False) for c in fixed]     # the task as given, its summary, the agent's closing message
         items += [(c, True) for c in members[sid] if c.id not in fixed_ids][:settings.card_hits]
+        positions: list[int] = []
         for chunk, is_hit in items:
             if len(picked) >= top_k or used >= settings.max_response_chars:
                 break
@@ -496,13 +523,23 @@ def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, 
             visible.update((t.session_id, t.pos) for t in turns)
             text = "\n".join(render(t, settings.time_notes, settings.turn_marks) for t in turns)
             used += len(text)
+            positions.append(len(picked))
             picked.append((chunk, text))
             if meta is not None and is_hit:
                 meta.setdefault("hit_text", {})[chunk.id] = render(chunk, settings.time_notes, settings.turn_marks)
+        if positions:
+            cards.append((sid, positions))
+            briefs[sid] = "\n".join(x for x in [
+                ("TASK: " + head.content[:600]) if head is not None else "",
+                summary[0].content[:900] if summary else "",
+                ("CLOSING: " + tail.content[:600]) if tail is not None and (head is None or tail.id != head.id) else "",
+            ] if x)
         if len(picked) >= top_k or used >= settings.max_response_chars:
             break
     if meta is not None:
         meta["rule_ids"] = set()
+        meta["cards"] = cards
+        meta["card_brief"] = briefs
     count = len(picked)
     return [MemoryResult(id=chunk.id, content=text, created_at=event_time(chunk), score=round(1.0 - i / count, 4))
             for i, (chunk, text) in enumerate(picked)]

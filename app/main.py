@@ -9,8 +9,10 @@ from contextlib import asynccontextmanager
 from fastapi import Depends, FastAPI, Header, HTTPException
 
 from . import __version__
+from .cardselect import CardSelector, card_selector_from_env
 from .config import Settings
 from .embed import Embedder, embedder_from_env, to_blob
+from .summarize import Summarizer, summarizer_from_env
 from .models import AddRequest, AddResponse, HealthResponse, SearchRequest, SearchResponse
 from .planner import Planner, planner_from_env
 from .rerank import Reranker, reranker_from_env
@@ -23,7 +25,8 @@ log = logging.getLogger("aml_memory")
 
 def create_app(settings: Settings | None = None, store: MemoryStore | None = None,
                planner: Planner | None = None, embedder: Embedder | None = None,
-               selector: Selector | None = None, reranker: Reranker | None = None) -> FastAPI:
+               selector: Selector | None = None, reranker: Reranker | None = None,
+               summarizer: Summarizer | None = None, card_selector: CardSelector | None = None) -> FastAPI:
     cfg = settings or Settings.from_env()
     logging.basicConfig(level=cfg.log_level)
     memory = store or MemoryStore(cfg.data_dir, retention_days=cfg.retention_days, pool_size=cfg.db_pool_size,
@@ -47,6 +50,12 @@ def create_app(settings: Settings | None = None, store: MemoryStore | None = Non
     memory.vector_cache_users = cfg.vector_cache_users
     if dense is not None:
         log.info("dense channel enabled: %s (%d dims)", dense.model, dense.dims)
+    note_writer = summarizer or summarizer_from_env(cfg.summary_model, cfg.summary_timeout, cfg.summary_chars, cfg.summary_cache)
+    if note_writer is not None:
+        log.info("add-time summaries enabled: %s", cfg.summary_model)
+    card_ranker = card_selector or card_selector_from_env(cfg.card_select_model, cfg.card_select_timeout)
+    if card_ranker is not None:
+        log.info("card selector enabled: %s (cards %d)", cfg.card_select_model, cfg.card_select_max)
 
     async def retention_loop() -> None:
         while True:
@@ -106,13 +115,17 @@ def create_app(settings: Settings | None = None, store: MemoryStore | None = Non
     def add_memory(payload: AddRequest, _: None = Depends(authenticate)) -> AddResponse:
         vectors = None
         identity = None
-        if dense is not None and not memory.seen_request(payload.user_id, payload.request_id):
+        summary = None
+        fresh = (dense is not None or note_writer is not None) and not memory.seen_request(payload.user_id, payload.request_id)
+        if fresh and dense is not None:
             # network call outside the write gate; a replay of a known request_id skips it
             vectors = [to_blob(v) if v is not None else None for v in dense.embed([m.text() for m in payload.messages])]
             identity = (dense.model, dense.dims)
+        if fresh and note_writer is not None:
+            summary = note_writer.summarize(payload.messages)      # outside the write gate; None on any failure
         try:
             with write_gate:
-                memory.add(payload, vectors, identity)
+                memory.add(payload, vectors, identity, summary)
         except ConflictingRequestError as conflict:
             raise HTTPException(status_code=409, detail=str(conflict)) from conflict
         return AddResponse(request_id=payload.request_id, user_id=payload.user_id, session_id=payload.session_id)
@@ -120,7 +133,7 @@ def create_app(settings: Settings | None = None, store: MemoryStore | None = Non
     def search_memory(payload: SearchRequest, _: None = Depends(authenticate)) -> SearchResponse:
         data = assemble_evidence(memory, cfg, payload.query, payload.options, payload.user_id, payload.top_k,
                                  planner=query_planner, gate=search_gate, embedder=dense,
-                                 selector=evidence_selector, reranker=cross_reranker)
+                                 selector=evidence_selector, reranker=cross_reranker, card_selector=card_ranker)
         log.info("search results=%d top_k=%d", len(data), payload.top_k)  # never the query or memory text
         return SearchResponse(data=data)
 

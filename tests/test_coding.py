@@ -11,10 +11,11 @@ from app.main import create_app
 from app.store import MemoryStore
 
 
-def make_client(**overrides):
+def make_client(summarizer=None, card_selector=None, **overrides):
     tmp = tempfile.TemporaryDirectory()
     settings = Settings(api_key="", data_dir=os.path.join(tmp.name, "d"), **overrides)
-    app = create_app(settings=settings, store=MemoryStore(settings.data_dir, code_terms=settings.code_terms))
+    app = create_app(settings=settings, store=MemoryStore(settings.data_dir, code_terms=settings.code_terms),
+                     summarizer=summarizer, card_selector=card_selector)
     client = TestClient(app)
     client.__enter__()
     client._tmp = tmp  # keep the directory alive
@@ -102,6 +103,64 @@ def test_session_cards_closing_message_follows_the_task():
     b = min(i for i, t in enumerate(contents) if TASK_B in t)
     assert "timezone.py" in contents[b + 1]                                        # B: task, then its closing message although it matches nothing
     c.__exit__(None, None, None)
+
+
+class FakeSummarizer:
+    def summarize(self, messages):
+        return "[session summary, written at Add time by gpt-4o-mini]\nTASK: " + messages[0].text()[:40] + "\nFILES CHANGED: zzzunique/path.py"
+
+
+class FakeCardSelector:
+    def __init__(self, order):
+        self.order = order
+        self.seen = None
+
+    def rank(self, query, briefs):
+        self.seen = briefs
+        return self.order
+
+
+CARD_KW = dict(session_cards=True, card_closing=True, rule_slots=0, recency_band=0.0, context_window=0)
+
+
+def test_summary_turn_is_stored_indexed_and_placed_after_the_task():
+    c = make_client(summarizer=FakeSummarizer(), **CARD_KW)
+    add(c, "a:chunk-0", "u", SESSION_A, session="A")
+    add(c, "b:chunk-0", "u", SESSION_B, session="B")
+    contents = [r["content"] for r in search(c, "u", "slugify strip dashes")]
+    assert TASK_A in contents[0]                                                   # the card still opens with the task
+    assert "[session summary" in contents[1] and "zzzunique/path.py" in contents[1]   # then the Add-time summary
+    assert "django/utils/text.py" in contents[2]                                   # then the agent's closing message
+    b = min(i for i, t in enumerate(contents) if TASK_B in t)
+    assert "[session summary" in contents[b + 1] and "timezone.py" in contents[b + 2]
+    assert sum(1 for t in contents if "[session summary" in t) == 2
+    hits = search(c, "u", "zzzunique")                                             # the summary is indexed like any turn:
+    assert hits and any("[session summary" in r["content"] for r in hits)          # a word only it contains retrieves its session
+    c.__exit__(None, None, None)
+
+
+def test_card_selector_moves_the_named_card_first():
+    sel = FakeCardSelector([1])                                                    # "the second card is the useful one"
+    c = make_client(card_selector=sel, **CARD_KW)
+    add(c, "a:chunk-0", "u", SESSION_A, session="A")
+    add(c, "b:chunk-0", "u", SESSION_B, session="B")
+    data = search(c, "u", "slugify strip dashes")
+    contents = [r["content"] for r in data]
+    assert TASK_B in contents[0] and "timezone.py" in contents[1]                 # B's whole card moved up, in order
+    assert any(TASK_A in t for t in contents)
+    assert len(sel.seen) == 2 and sel.seen[0].startswith("TASK: ") and "CLOSING: " in sel.seen[0]
+    scores = [r["score"] for r in data]
+    assert scores == sorted(scores, reverse=True) and len(set(scores)) == len(scores)
+    c.__exit__(None, None, None)
+
+
+def test_card_selector_failure_or_empty_keeps_the_order():
+    for answer in (None, []):
+        c = make_client(card_selector=FakeCardSelector(answer), **CARD_KW)
+        add(c, "a:chunk-0", "u", SESSION_A, session="A")
+        add(c, "b:chunk-0", "u", SESSION_B, session="B")
+        assert TASK_A in search(c, "u", "slugify strip dashes")[0]["content"]
+        c.__exit__(None, None, None)
 
 
 def test_session_cards_off_returns_hits_only():

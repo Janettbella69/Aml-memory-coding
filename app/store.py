@@ -289,11 +289,12 @@ class MemoryStore:
             return conn.execute("SELECT 1 FROM ingest_log WHERE request_id = ?", (request_id,)).fetchone() is not None
 
     def add(self, payload: AddRequest, vectors: Optional[list[Optional[bytes]]] = None,
-            embed_identity: Optional[tuple[str, int]] = None) -> int:
+            embed_identity: Optional[tuple[str, int]] = None, summary: Optional[str] = None) -> int:
         """Persist one Add call in a single transaction on the user's own database. Returns the number
         of turns stored (0 for an idempotent replay). Raises ConflictingRequestError when the
         request_id was already used with a different body. `vectors` (one float16 blob or None per message,
-        aligned with payload.messages) and `embed_identity` = (model, dims) come from the dense channel."""
+        aligned with payload.messages) and `embed_identity` = (model, dims) come from the dense channel;
+        `summary` (coding-0.2.0) is stored as one extra turn of role `summary` at the end of the chunk."""
         canonical = json.dumps(payload.model_dump(), sort_keys=True, ensure_ascii=False, separators=(",", ":"))
         fingerprint = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         received_at = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
@@ -301,7 +302,7 @@ class MemoryStore:
         with self.connect(payload.user_id) as conn:
             assert conn is not None
             try:
-                stored = self._write(conn, payload, fingerprint, received_at, ordinal, vectors, embed_identity)
+                stored = self._write(conn, payload, fingerprint, received_at, ordinal, vectors, embed_identity, summary)
             except BaseException:
                 conn.rollback()
                 raise
@@ -312,7 +313,8 @@ class MemoryStore:
         return stored
 
     def _write(self, conn: sqlite3.Connection, payload: AddRequest, fingerprint: str, received_at: str, ordinal,
-               vectors: Optional[list[Optional[bytes]]] = None, embed_identity: Optional[tuple[str, int]] = None) -> int:
+               vectors: Optional[list[Optional[bytes]]] = None, embed_identity: Optional[tuple[str, int]] = None,
+               summary: Optional[str] = None) -> int:
         claimed = conn.execute(
             "INSERT OR IGNORE INTO ingest_log(request_id, fingerprint, session_id, received_at) VALUES (?,?,?,?)",
             (payload.request_id, fingerprint, payload.session_id, received_at),
@@ -343,6 +345,19 @@ class MemoryStore:
             self._index(conn, row.lastrowid, text, mem_id)
             stored += 1
             chars += len(text)
+        if stored and summary and summary.strip():
+            # coding-0.2.0: the chunk's Add-time summary, one turn at the end of the chunk's position range (never the
+            # session's opening turn, never an assistant turn, so cards still open with the task and close with the agent)
+            last_ms = next((m.timestamp for m in reversed(payload.messages) if m.timestamp is not None), None)
+            mem_id = "mem_" + hashlib.blake2b(f"{payload.request_id}\x1fsummary".encode("utf-8"), digest_size=10).hexdigest()
+            row = conn.execute(
+                "INSERT INTO memories(id, request_id, session_id, role, content, event_ms, pos, standing, stored_at, vec)"
+                " VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (mem_id, payload.request_id, payload.session_id, "summary", summary.strip(), last_ms,
+                 base + POS_STRIDE - 1, 0, received_at, None),
+            )
+            self._index(conn, row.lastrowid, summary.strip(), mem_id)
+            chars += len(summary)
         if stored:
             self._bump_corpus(conn, stored, chars)
         conn.commit()
@@ -493,6 +508,21 @@ class MemoryStore:
                              f" WHERE session_id IN ({marks}) AND lower(role) = 'assistant' GROUP BY session_id) f"
                              " ON f.session_id = m.session_id AND f.p = m.pos", list(session_ids)).fetchall()
         return {r["session_id"]: self._chunk(user_id, r) for r in rows}
+
+    def summaries(self, user_id: str, session_ids: set[str], conn: Optional[sqlite3.Connection] = None) -> dict[str, list[Chunk]]:
+        """The Add-time summary turns (role `summary`, coding-0.2.0) of each listed session, in position order."""
+        if not session_ids:
+            return {}
+        with self._reader(user_id, conn) as c:
+            if c is None:
+                return {}
+            marks = ",".join("?" * len(session_ids))
+            rows = c.execute(f"SELECT * FROM memories WHERE session_id IN ({marks}) AND role = 'summary'"
+                             " ORDER BY session_id, pos", list(session_ids)).fetchall()
+        out: dict[str, list[Chunk]] = {}
+        for r in rows:
+            out.setdefault(r["session_id"], []).append(self._chunk(user_id, r))
+        return out
 
     def newest(self, user_id: str, limit: int, conn: Optional[sqlite3.Connection] = None) -> list[Chunk]:
         if limit <= 0:

@@ -90,6 +90,13 @@ class Settings:
     card_sessions: int = 0             # v1.1: cards returned (0 = until top_k / MAX_RESPONSE_CHARS)
     card_tool_weight: float = 0.3      # v1.1: weight of a non-opening user turn (a tool result in an agent transcript) in the session score
     card_closing: bool = False         # v1.1: a card also carries the session's last assistant turn (the agent's closing message) after the opening turn
+    summary_model: str = ""            # coding-0.2.0: "gpt-4o-mini" writes one labelled summary turn per Add request next to the verbatim turns (app/summarize.py)
+    summary_timeout: float = 60.0
+    summary_chars: int = 30_000        # coding-0.2.0: characters of the clipped transcript shown to the summariser
+    summary_cache: str = ""            # coding-0.2.0: SQLite file caching summaries by digest hash (same history written again costs nothing)
+    card_select_model: str = ""        # coding-0.2.0: "gpt-4o-mini" re-orders the leading cards by usefulness for the new task (app/cardselect.py)
+    card_select_max: int = 12          # coding-0.2.0: leading cards shown to the selector
+    card_select_timeout: float = 30.0
     log_level: str = "INFO"
 
     @classmethod
@@ -155,5 +162,12 @@ class Settings:
             card_sessions=_bounded("CARD_SESSIONS", int, 0, 0, 1000),
             card_tool_weight=_bounded("CARD_TOOL_WEIGHT", float, 0.3, 0.0, 1.0),
             card_closing=os.environ.get("CARD_CLOSING", "0").strip().lower() in ("1", "true", "yes", "on"),
+            summary_model=os.environ.get("SUMMARY_MODEL", "").strip(),
+            summary_timeout=_bounded("SUMMARY_TIMEOUT", float, 60.0, 1.0, 600.0),
+            summary_chars=_bounded("SUMMARY_CHARS", int, 30_000, 2_000, 200_000),
+            summary_cache=os.environ.get("SUMMARY_CACHE", "").strip(),
+            card_select_model=os.environ.get("CARD_SELECT_MODEL", "").strip(),
+            card_select_max=_bounded("CARD_SELECT_MAX", int, 12, 2, 50),
+            card_select_timeout=_bounded("CARD_SELECT_TIMEOUT", float, 30.0, 1.0, 300.0),
             log_level=os.environ.get("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         )
