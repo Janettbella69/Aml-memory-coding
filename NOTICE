@@ -1,0 +1,15 @@
+aml-memory
+
+This project was written for the Agent Memory Leaderboard (AML) Cycle 2, Open-source Methods division.
+
+Prior work whose ideas it builds on (see docs/METHOD_CARD.md for the exact list of borrowed ideas and
+every change made):
+
+- imlrz/ReFind (MIT License, Copyright (c) 2026 ReFind Authors; arXiv:2608.12888) — rendering each turn
+  with its UTC timestamp and role, returning neighbouring turns as context, ordering turns by the Add
+  ordinal, the reciprocal-rank-fusion idea, and the shape of the service skeleton. No ReFind source
+  files are included in this repository.
+- FantaSmallhamster/ldbd-sqlite-fts-baseline (no licence published) — the pattern "raw turns in SQLite
+  FTS5, BM25 hits, newest turns as a fallback". An early draft of this project (v0.1, commit f09d825)
+  contained lines adapted from that file; v0.2 rewrote those modules so that no adapted code remains
+  (only names fixed by the API contract and ordinary Python/SQL idioms coincide).

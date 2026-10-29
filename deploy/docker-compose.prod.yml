@@ -1,0 +1,38 @@
+# Production stack: memory service (no host port) + Caddy (80/443, automatic TLS).
+#   cp .env.example .env   # set MEMORY_API_KEY and MEMORY_DOMAIN
+#   docker compose -f deploy/docker-compose.prod.yml --env-file .env up -d --build
+services:
+  memory:
+    build:
+      context: ..
+    env_file: ../.env
+    volumes:
+      - memory-data:/data
+    restart: unless-stopped
+    ulimits:
+      nofile: { soft: 65536, hard: 65536 }
+    logging:
+      driver: json-file
+      options: { max-size: "20m", max-file: "5" }
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MEMORY_DOMAIN=${MEMORY_DOMAIN}
+      - MEMORY_ALT_DOMAIN=${MEMORY_ALT_DOMAIN:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./sites:/etc/caddy/sites:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      - caddy-logs:/var/log/caddy
+    depends_on:
+      - memory
+    restart: unless-stopped
+volumes:
+  memory-data:
+  caddy-data:
+  caddy-config:
+  caddy-logs:
