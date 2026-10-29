@@ -22,6 +22,9 @@ v0.4: turns are rendered with resolved relative-time notes (app/timex.py, TIME_N
 retrieval per OPTIONS_MODE (append | none | channel with OPTIONS_WEIGHT).
 v0.9: an optional final cut (RETURN_CHARS, default off) after every reordering; standing rules survive it. Measured with
 the organisers' answer and judge prompts it did not help (PLAN.md 10-15), so the whole assembled list goes out.
+v1.1 (coding track): CODE_TERMS adds the inner words of camelCase identifiers on both sides of the word index
+(app/codeterms.py); SESSION_CARDS groups the result list by past session, each card opened by the session's first turn
+(`_assemble_cards`). Both off by default: the textual configuration is unchanged.
 """
 from __future__ import annotations
 
@@ -31,6 +34,7 @@ from datetime import timedelta
 from contextlib import nullcontext
 from typing import Any, ContextManager, Optional
 
+from .codeterms import split_identifier
 from .config import Settings
 from .models import MemoryResult
 from .embed import Embedder
@@ -68,19 +72,24 @@ PREFIX_MIN = 5   # terms at least this long also match as prefixes ("illustrat"*
 RRF_K = 60
 
 
-def word_terms(query: str, options: list[str] | None) -> list[str]:
+def word_terms(query: str, options: list[str] | None, code_terms: bool = False) -> list[str]:
     """Distinct query terms in first-seen order. Linear in the query length: a question may carry a whole reference
     document (the organisers' CL-bench prompt says "The question includes a reference document"), i.e. tens of
-    thousands of words."""
+    thousands of words. With `code_terms` (v1.1) a camelCase identifier also contributes its inner words."""
     terms: list[str] = []
     seen: set[str] = set()
     for text in (query, *(options or ())):
-        for raw in WORD_RE.findall(text.lower()):
-            tok = raw.strip("_")
+        for raw in WORD_RE.findall(text):
+            tok = raw.lower().strip("_")
             if len(tok) < 2 or tok in seen or tok in STOPWORDS or CJK_CHAR.search(tok):
                 continue
             seen.add(tok)
             terms.append(tok)
+            if code_terms:
+                for part in split_identifier(raw.strip("_")):
+                    if len(part) >= 2 and part not in seen and part not in STOPWORDS:
+                        seen.add(part)
+                        terms.append(part)
     return terms
 
 
@@ -317,13 +326,13 @@ def _first_pass(store: MemoryStore, conn, settings: Settings, query: str, option
                 user_id: str, top_k: int, qvec: Any = None) -> list[tuple[Chunk, float]]:
     pool = top_k * 2
     opts = options if settings.options_mode == "append" else None
-    by_words = store.fts_search(user_id, fts_expression(word_terms(query, opts)), pool, conn)
+    by_words = store.fts_search(user_id, fts_expression(word_terms(query, opts, settings.code_terms)), pool, conn)
     by_trigrams = store.trigram_search(user_id, fts_expression(cjk_terms(query, opts), prefixes=False), pool, conn)
     hits = fuse(by_words, by_trigrams)
     if settings.options_mode == "channel" and options:
         # v0.4: the options as their own channel (idea: Hybrid Episodic Memory, Cycle-1 #6), so the question's terms
         # keep the lead and a distractor option alone cannot outrank evidence for the question itself
-        o_words = word_terms("", options)
+        o_words = word_terms("", options, settings.code_terms)
         o_grams = cjk_terms("", options)
         by_opts = fuse(store.fts_search(user_id, fts_expression(o_words), pool, conn) if o_words else [],
                        store.trigram_search(user_id, fts_expression(o_grams, prefixes=False), pool, conn) if o_grams else [])
@@ -359,7 +368,7 @@ def _expand(store: MemoryStore, conn, settings: Settings, user_id: str, top_k: i
         opts = options if settings.options_mode == "append" else None
         queries = [(query, opts)] + queries   # the original question, restricted to the period
     for text, opts in queries:
-        words = fts_expression(word_terms(text, opts))
+        words = fts_expression(word_terms(text, opts, settings.code_terms))
         grams = fts_expression(cjk_terms(text, opts), prefixes=False)
         more = fuse(store.fts_search(user_id, words, pool, conn), store.trigram_search(user_id, grams, pool, conn))
         if rng is not None:
@@ -381,6 +390,8 @@ def _prefer_dates(hits: list[tuple[Chunk, float]], plan: Plan) -> list[tuple[Chu
 def _assemble(store: MemoryStore, conn, settings: Settings, query: str, options: list[str] | None,
               user_id: str, top_k: int, hits: list[tuple[Chunk, float]],
               meta: Optional[dict[str, Any]] = None) -> list[MemoryResult]:
+    if settings.session_cards and hits:
+        return _assemble_cards(store, conn, settings, user_id, top_k, hits, meta)
     top_score = hits[0][1] if hits else 1.0
     score_of = {chunk.id: s for chunk, s in hits}
 
@@ -433,6 +444,58 @@ def _assemble(store: MemoryStore, conn, settings: Settings, query: str, options:
         if meta is not None:
             meta.setdefault("hit_text", {})[chunk.id] = render(chunk, settings.time_notes, settings.turn_marks)   # the matched turn alone, for the reranker
     return results
+
+
+def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, top_k: int,
+                    hits: list[tuple[Chunk, float]], meta: Optional[dict[str, Any]] = None) -> list[MemoryResult]:
+    """v1.1 coding assembly (SESSION_CARDS): the result list is grouped by past session, one "card" per session.
+
+    Sessions are ranked by the reciprocal-rank sum of their hit turns (RRF_K); a user turn that is not the session's
+    opening turn weighs CARD_TOOL_WEIGHT - in an agent transcript such turns are almost always tool output, which
+    matches broadly (every session that read the same file) and told the paired session apart worst on SWEContextBench.
+    A card is the session's opening turn (the task as it was given, verbatim, even when it is not a hit itself) followed
+    by its hit turns in rank order, at most CARD_HITS of them, each with its +- CONTEXT_WINDOW span; at most CARD_SESSIONS
+    cards (0 = until top_k or MAX_RESPONSE_CHARS). Measured with scripts/eval_swecb.py (docs/METHOD_CARD.md 1.1)."""
+    hits = hits[:top_k]   # the fused pool holds 2 x top_k candidates; the tail only adds noise to the session scores
+    opening = store.openings(user_id, {c.session_id for c, _ in hits}, conn)
+    score: dict[str, float] = {}
+    first: dict[str, int] = {}
+    members: dict[str, list[Chunk]] = {}
+    for rank, (chunk, _) in enumerate(hits, start=1):
+        head = opening.get(chunk.session_id)
+        tool_like = chunk.role == "user" and (head is None or head.id != chunk.id)
+        sid = chunk.session_id
+        score[sid] = score.get(sid, 0.0) + (settings.card_tool_weight if tool_like else 1.0) / (RRF_K + rank)
+        first.setdefault(sid, rank)
+        members.setdefault(sid, []).append(chunk)
+    picked: list[tuple[Chunk, str]] = []
+    visible: set[tuple[str, int]] = set()
+    used = 0
+    for n, sid in enumerate(sorted(score, key=lambda k: (-score[k], first[k]))):
+        if settings.card_sessions and n >= settings.card_sessions:
+            break
+        head = opening.get(sid)
+        items: list[tuple[Chunk, bool]] = [(head, False)] if head is not None else []
+        items += [(c, True) for c in members[sid] if head is None or c.id != head.id][:settings.card_hits]
+        for chunk, is_hit in items:
+            if len(picked) >= top_k or used >= settings.max_response_chars:
+                break
+            if (chunk.session_id, chunk.pos) in visible:
+                continue
+            turns = store.span(chunk, settings.context_window, conn) if is_hit else [chunk]
+            visible.update((t.session_id, t.pos) for t in turns)
+            text = "\n".join(render(t, settings.time_notes, settings.turn_marks) for t in turns)
+            used += len(text)
+            picked.append((chunk, text))
+            if meta is not None and is_hit:
+                meta.setdefault("hit_text", {})[chunk.id] = render(chunk, settings.time_notes, settings.turn_marks)
+        if len(picked) >= top_k or used >= settings.max_response_chars:
+            break
+    if meta is not None:
+        meta["rule_ids"] = set()
+    count = len(picked)
+    return [MemoryResult(id=chunk.id, content=text, created_at=event_time(chunk), score=round(1.0 - i / count, 4))
+            for i, (chunk, text) in enumerate(picked)]
 
 
 def _assemble_fit(store: MemoryStore, conn, settings: Settings, user_id: str, top_k: int,

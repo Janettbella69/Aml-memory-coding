@@ -16,6 +16,7 @@ from typing import Iterator, Optional
 import numpy as np
 
 from .models import AddRequest
+from .codeterms import index_text
 from .embed import Embedder, from_blob, to_blob
 from .timex import notes_suffix
 
@@ -155,13 +156,14 @@ class MemoryStore:
     """
 
     def __init__(self, data_dir: str, retention_days: int = 30, pool_size: int = 128,
-                 cache_kb: int = 256, idle_seconds: int = 120) -> None:
+                 cache_kb: int = 256, idle_seconds: int = 120, code_terms: bool = False) -> None:
         self.data_dir = Path(data_dir)
         self.users_dir = self.data_dir / "users"
         self.retention_days = retention_days
         self.pool_size = pool_size
         self.cache_kb = cache_kb          # per-connection page cache; memory is bounded by pool_size x cache_kb
         self.idle_seconds = idle_seconds
+        self.code_terms = code_terms      # v1.1 coding: the word index also sees the inner words of camelCase identifiers
         # Open connections stay cached per process: opening and closing a WAL file on every request makes
         # the last close checkpoint the WAL, and 16 concurrent requests on one user then spend hundreds of
         # milliseconds in SQLite's busy handler (measured with ab: 765 ms p50 at concurrency 16 vs 5 ms alone).
@@ -271,9 +273,9 @@ class MemoryStore:
         conn.execute(f"PRAGMA user_version = {SCHEMA_VERSION}")
         conn.commit()
 
-    @staticmethod
-    def _index(conn: sqlite3.Connection, rowid: int, content: str, mem_id: str) -> None:
-        conn.execute("INSERT INTO memories_fts(rowid, content) VALUES (?,?)", (rowid, content))  # external content: index only
+    def _index(self, conn: sqlite3.Connection, rowid: int, content: str, mem_id: str) -> None:
+        indexed = index_text(content) if self.code_terms else content
+        conn.execute("INSERT INTO memories_fts(rowid, content) VALUES (?,?)", (rowid, indexed))  # external content: index only
         cjk = cjk_only(content)
         if cjk:  # the trigram index only carries CJK text; English corpora pay nothing for it
             conn.execute("INSERT INTO memories_fts_tri(rowid, content, mem_id) VALUES (?,?,?)", (rowid, cjk, mem_id))
@@ -463,6 +465,19 @@ class MemoryStore:
                 return []
             rows = c.execute("SELECT * FROM memories WHERE standing = 1 ORDER BY event_ms DESC, pos DESC LIMIT ?", (limit,)).fetchall()
         return [self._chunk(user_id, r) for r in rows]
+
+    def openings(self, user_id: str, session_ids: set[str], conn: Optional[sqlite3.Connection] = None) -> dict[str, Chunk]:
+        """The first stored turn (lowest position) of each listed session: in an agent transcript, the task as it was given."""
+        if not session_ids:
+            return {}
+        with self._reader(user_id, conn) as c:
+            if c is None:
+                return {}
+            marks = ",".join("?" * len(session_ids))
+            rows = c.execute(f"SELECT m.* FROM memories m JOIN (SELECT session_id, MIN(pos) AS p FROM memories"
+                             f" WHERE session_id IN ({marks}) GROUP BY session_id) f"
+                             " ON f.session_id = m.session_id AND f.p = m.pos", list(session_ids)).fetchall()
+        return {r["session_id"]: self._chunk(user_id, r) for r in rows}
 
     def newest(self, user_id: str, limit: int, conn: Optional[sqlite3.Connection] = None) -> list[Chunk]:
         if limit <= 0:

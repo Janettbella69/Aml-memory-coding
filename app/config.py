@@ -84,6 +84,11 @@ class Settings:
                                        # reranker chooses from). 0 = off
     return_from_chars: int = 0         # v0.9: apply RETURN_CHARS only to users whose stored text exceeds this many characters; smaller
                                        # memories go out whole. 0 = every user
+    code_terms: bool = False           # v1.1 coding: camelCase identifiers are indexed and queried by their inner words too (app/codeterms.py)
+    session_cards: bool = False        # v1.1 coding: results grouped per past session, each card opened by the session's first turn (search._assemble_cards)
+    card_hits: int = 8                 # v1.1: hit turns returned per session card
+    card_sessions: int = 0             # v1.1: cards returned (0 = until top_k / MAX_RESPONSE_CHARS)
+    card_tool_weight: float = 0.3      # v1.1: weight of a non-opening user turn (a tool result in an agent transcript) in the session score
     log_level: str = "INFO"
 
     @classmethod
@@ -143,5 +148,10 @@ class Settings:
             turn_marks=os.environ.get("TURN_MARKS", "0").strip().lower() in ("1", "true", "yes", "on", "untimed"),
             return_chars=_bounded("RETURN_CHARS", int, 0, 0, 2_000_000),
             return_from_chars=_bounded("RETURN_FROM_CHARS", int, 0, 0, 1_000_000_000),
+            code_terms=os.environ.get("CODE_TERMS", "0").strip().lower() in ("1", "true", "yes", "on"),
+            session_cards=os.environ.get("SESSION_CARDS", "0").strip().lower() in ("1", "true", "yes", "on"),
+            card_hits=_bounded("CARD_HITS", int, 8, 1, 100),
+            card_sessions=_bounded("CARD_SESSIONS", int, 0, 0, 1000),
+            card_tool_weight=_bounded("CARD_TOOL_WEIGHT", float, 0.3, 0.0, 1.0),
             log_level=os.environ.get("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         )
