@@ -37,7 +37,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 INSTANCE_RE = re.compile(r"instance_id:\s*(\S+)")
+DIFF_FILE_RE = re.compile(r"^diff --git a/(\S+) b/", re.M)
 HEAD_CHARS = 60_000   # "what the reader sees first" window for the head-share metric
+
+
+def gold_files(task: dict) -> set[str]:
+    """Paths the task's reference patch touches - an offline label only (the platform's 文件定位率 counts whether the
+    coding agent reaches the right files; the patch itself never enters Add or Search)."""
+    return set(DIFF_FILE_RE.findall(task.get("patch") or ""))
 
 
 def repo_of(instance_id: str) -> str:
@@ -223,8 +230,13 @@ def main() -> None:
             take = min(len(r.content), HEAD_CHARS - head_chars)
             head_chars += take
             head_paired += take if s in expected else 0
+        files = gold_files(task)              # file-localisation proxy: a reference-patch path named anywhere / in the head
+        all_text = "\n".join(r.content for r in results)
+        files_any = bool(files) and any(f in all_text for f in files)
+        files_head = bool(files) and any(f in all_text[:HEAD_CHARS] for f in files)
         rows.append({"instance_id": task["instance_id"], "repo": task["repo"], "rank": rank, "session_rank": session_rank,
-                     "statement": statement, "closing": closed, "results": len(results), "chars": total,
+                     "statement": statement, "closing": closed, "files_any": files_any, "files_head": files_head,
+                     "results": len(results), "chars": total,
                      "paired_share": (paired / total) if total else 0.0,
                      "head_share": (head_paired / head_chars) if head_chars else 0.0,
                      "sessions_top10": len(set(sessions[:10]))})
@@ -257,6 +269,8 @@ def main() -> None:
         "session_hit@5": hit(5, key="session_rank"), "session_mrr": mrr(key="session_rank"),
         "statement": sum(1 for r in rows if r["statement"]) / n if n else 0.0,
         "closing": sum(1 for r in rows if r["closing"]) / n if n else 0.0,
+        "files_any": sum(1 for r in rows if r["files_any"]) / n if n else 0.0,
+        "files_head": sum(1 for r in rows if r["files_head"]) / n if n else 0.0,
         "results_median": statistics.median(r["results"] for r in rows) if rows else 0,
         "chars_median": statistics.median(r["chars"] for r in rows) if rows else 0,
         "paired_share_median": statistics.median(r["paired_share"] for r in rows) if rows else 0.0,
@@ -275,13 +289,16 @@ def main() -> None:
           f"chars median {summary['chars_median']:,.0f}   paired share: whole list median {100 * summary['paired_share_median']:.0f}%, "
           f"first {HEAD_CHARS // 1000}k chars median {100 * summary['head_share_median']:.0f}%   "
           f"distinct sessions in top 10 median {summary['sessions_top10_median']:.0f}")
+    print(f"  file localisation proxy (a reference-patch path named in the results): anywhere {summary['files_any']:.3f}   "
+          f"in the first {HEAD_CHARS // 1000}k chars {summary['files_head']:.3f}")
     by_repo: dict[str, list] = defaultdict(list)
     for r in rows:
         by_repo[r["repo"]].append(r)
-    print(f"  {'repository':28} {'n':>3} {'s@1':>6} {'s@3':>6} {'sMRR':>6} {'stmt':>5} {'head%':>6}")
+    print(f"  {'repository':28} {'n':>3} {'s@1':>6} {'s@3':>6} {'sMRR':>6} {'stmt':>5} {'head%':>6} {'files':>6}")
     for repo, rs in sorted(by_repo.items(), key=lambda kv: -len(kv[1])):
         print(f"  {repo:28} {len(rs):3} {hit(1, rs, 'session_rank'):6.2f} {hit(3, rs, 'session_rank'):6.2f} {mrr(rs, 'session_rank'):6.2f} "
-              f"{sum(1 for r in rs if r['statement']) / len(rs):5.2f} {100 * statistics.median(r['head_share'] for r in rs):6.0f}")
+              f"{sum(1 for r in rs if r['statement']) / len(rs):5.2f} {100 * statistics.median(r['head_share'] for r in rs):6.0f} "
+              f"{sum(1 for r in rs if r['files_head']) / len(rs):6.2f}")
     if args.out:
         with open(args.out, "a", encoding="utf-8") as fh:
             fh.write(json.dumps(summary, ensure_ascii=False) + "\n")
