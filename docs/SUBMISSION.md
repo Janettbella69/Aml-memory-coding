@@ -67,5 +67,5 @@ Add：https://codememory.azorashopping.site/v1/memories/add  Search：https://co
 
 【来源与披露】基础代码即本队文本赛道的 aml-memory v1.0.0 原样导入（docs/METHOD_CARD.md 全文记录）。思路借鉴并已注明：ReFind（imlrz/ReFind，MIT，arXiv:2608.12888）的时间戳渲染、Porter + RRF、会话级 RRF；InvMem、Hybrid Episodic Memory（见方法卡片）；FantaSmallhamster/ldbd-sqlite-fts-baseline 的「FTS5 存原文 + 最新回退」模式（v0.1 草稿曾改编其约 30 行，v0.2 起全部重写）。本地检索检验数据：SWEContextBench（jiayuanz3，Hugging Face MIT，arXiv:2602.08316；官网列为代码赛道参考目录），仅用于检验、未用于训练，数据不入库。全部方法改动按版本记录在 docs/METHOD_CARD.md「Method changes by version」，代码赛道改动在 coding-0.2.0 条目。
 
-【运行指南】本地：uv sync && uv run pytest -q && uv run uvicorn --factory app.main:create_app --port 8000。生产：cp .env.example .env，填写 MEMORY_API_KEY，然后 docker compose -p codememory -f deploy/tencent/docker-compose.yml --env-file .env up -d --build（挂在已有 nginx 后面，见 deploy/tencent/README.md）；独立机器可用 deploy/README.md 的 Caddy 方案。配置项见 .env.example。
+【运行指南】本地：uv sync && uv run pytest -q && uv run uvicorn --factory app.main:create_app --port 8000。生产：cp .env.example .env，填写 MEMORY_API_KEY 和 OPENAI_API_KEY（OpenRouter），然后 docker compose -p codememory -f deploy/tencent/docker-compose.yml --env-file .env up -d --build（挂在已有 nginx 后面，见 deploy/tencent/README.md）；独立机器可用 deploy/README.md 的 Caddy 方案。配置项见 .env.example。
 ```
