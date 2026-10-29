@@ -21,14 +21,14 @@ The textual entry (`aml-memory` v1.0.0, `Janettbella69/Aml-memory@9f5c5bf`, `mem
 | ★ Health URL | `https://codememory.azorashopping.site/health` (unauthenticated GET, 200, returns `{"status":"ok","version":"coding-0.2.0"}`) |
 | ★ Authentication | `X-Api-Key: <Memory System Key>` (declared scheme; `Authorization: Bearer` / `Token` also accepted). A NEW key, generated for this deployment only — never the textual entry's key — sent through the organisers' secure channel, not in email text or this repository. |
 | Memory System Key | the value of `MEMORY_API_KEY` in the Tencent box's `.env` (≥ 16 characters); never committed |
-| ★ Capacity declaration | TBD after the deployment soak (`deploy/tencent/README.md`): intended Max add concurrency 16 · Search concurrency 16 · `top_k` 1–1000 (official runs use 100) · Add synchronous, persisted and searchable before the 200 · no server-side timeout (platform limit 30 min/request) · single instance · `client_max_body_size 200m` at the proxy |
-| Typical latency (FAQ Q5) | TBD from the soak; locally Search ≈ 2.5 s (one gpt-4o-mini call) and Add ≈ 5–15 s for a whole trajectory (one gpt-4o-mini call), both well inside the platform's 30-minute limit |
+| ★ Capacity declaration | Max add concurrency 16 · Search concurrency 16 · `top_k` 1–1000 (official runs use 100) · Add synchronous, persisted and searchable before the 200 · no server-side timeout (platform limit 30 min/request) · single instance · `client_max_body_size 200m` at the proxy. Measured 2026-10-29 through TLS at 16-way (`scripts/soak_local.py`): 160 Adds, 0 errors, 5.6 adds/s; 64 Searches, 0 errors |
+| Typical latency (FAQ Q5) | Measured 2026-10-29 through TLS at 16-way concurrency: Add p50 2.4 s / p90 3.6 s / p99 4.7 s (one gpt-4o-mini summary call per Add); Search p50 0.3 s / p99 1.2 s without the card selector firing, 2–14 s with it (one gpt-4o-mini call); a whole trajectory per Add takes 5–15 s — all well inside the platform's 30-minute limit |
 | Request body & storage capacity (FAQ Q5) | Add bodies up to 200 MB at the proxy (a whole trajectory per request is fine); storage ≈ 5× raw text at rest; disk headroom recorded with the soak |
 | Models & external dependencies (FAQ Q5/Q7) | `gpt-4o-mini` only (via OpenRouter, model id `openai/gpt-4o-mini` = the same OpenAI model, routed): one call per Add request that writes a labelled summary turn stored next to the verbatim turns, and one call per Search that re-orders the leading session cards; both fall back to the deterministic behaviour on any failure. No embedding model, no reranker; SQLite FTS5, numpy; nginx TLS. |
 | Multimodal processing declaration (FAQ Q5) | N/A — Coding track only |
 | Service maintenance (FAQ Q5) | Single operator; health monitored via `/health`; Docker `restart: unless-stopped`; no changes during a Full run (FAQ Q29); idempotency records and data volume kept until the run is closed (FAQ Q26/Q27), deleted within 30 days after (FAQ Q31) |
 | Public repository URL | `https://github.com/Janettbella69/Aml-memory-coding` (public) |
-| ★ Fixed commit hash | the commit tagged `coding-0.2.0` (full hash: `git rev-parse coding-0.2.0^{commit}`) — TBD until the tag is pushed |
+| ★ Fixed commit hash | `873b4d726548c3c70d2fd46282ab2318f5ba41be` = the commit tagged `coding-0.2.0` (pushed 2026-10-29; `git rev-parse coding-0.2.0^{commit}`) — the deployed code is that commit (`git clone --branch coding-0.2.0`) |
 | Attribution of prior work | `docs/METHOD_CARD.md` § "Prior work and attribution" (ReFind — MIT, incl. the session-level RRF idea; the rewritten FTS5-baseline history) and `NOTICE` (also SWEContextBench, the evaluation data used for the local retrieval check) |
 | Method changes | `docs/METHOD_CARD.md` § "Method changes by version", entry `coding-0.2.0` (base = textual 1.0.0 imported byte-for-byte) |
 
@@ -52,14 +52,14 @@ The textual entry (`aml-memory` v1.0.0, `Janettbella69/Aml-memory@9f5c5bf`, `mem
 - Once a Full evaluation is accepted the version cannot be replaced or withdrawn; freeze the version (tag) before applying.
 - Before every Full run the 8-item gate in `docs/CHECKLIST.md` must be confirmed.
 
-## 提交说明与运行指南（表单文本，冻结时把 <COMMIT> 换成固定 commit，<容量> 换成压测结果）
+## 提交说明与运行指南（表单文本，2026-10-29 已填入固定 commit 与压测结果）
 
 ```
-【系统】aml-memory-coding，版本名 coding-0.2.0，固定 commit <COMMIT>，公开仓库 https://github.com/Janettbella69/Aml-memory-coding（MIT）。参赛组别：开源方法榜；赛道：代码记忆。按组委会 2026-10-28 回复单独备案：本实现与文本赛道的 aml-memory v1.0.0（Janettbella69/Aml-memory@9f5c5bf，memory.azorashopping.site）是不同代码、不同地址、不同凭据，不覆盖、不混入既有文本评测。
+【系统】aml-memory-coding，版本名 coding-0.2.0，固定 commit 873b4d726548c3c70d2fd46282ab2318f5ba41be（git tag coding-0.2.0），公开仓库 https://github.com/Janettbella69/Aml-memory-coding（MIT）。参赛组别：开源方法榜；赛道：代码记忆。按组委会 2026-10-28 回复单独备案：本实现与文本赛道的 aml-memory v1.0.0（Janettbella69/Aml-memory@9f5c5bf，memory.azorashopping.site）是不同代码、不同地址、不同凭据，不覆盖、不混入既有文本评测。
 
 【部署】腾讯云单实例（2 vCPU / 3 GB，与另一站点共用一台机，nginx TLS），Docker。
 Add：https://codememory.azorashopping.site/v1/memories/add  Search：https://codememory.azorashopping.site/v1/memories/search  Health：https://codememory.azorashopping.site/health（无鉴权 GET）。
-鉴权：X-Api-Key（同时接受 Authorization: Bearer / Token），本部署专用的新密钥，经安全渠道提交。容量与限制：Add 并发 <容量>、Search 并发 <容量>、top_k 1–1000；单次请求体上限 200 MB（整段会话轨迹可一次写入）；Add 同步写入，返回 200 即已持久化且可检索；request_id 幂等（同 id 不同内容返回 409），幂等记录持久化在 SQLite，重启不丢；无服务端超时（遵守平台 30 分钟上限）。评测数据不记录文本日志、不用于训练，任务结束 30 天内删除。
+鉴权：X-Api-Key（同时接受 Authorization: Bearer / Token），本部署专用的新密钥，经安全渠道提交。容量与限制：Add 并发 16、Search 并发 16、top_k 1–1000；单次请求体上限 200 MB（整段会话轨迹可一次写入）；Add 同步写入，返回 200 即已持久化且可检索（写入时的一次 gpt-4o-mini 摘要调用也在返回前完成）；request_id 幂等（同 id 不同内容返回 409），幂等记录持久化在 SQLite，重启不丢；无服务端超时（遵守平台 30 分钟上限）。实测（2026-10-29，16 路并发、公网 TLS）：Add 160 次 0 错误、p50 2.4 s / p99 4.7 s；Search 64 次 0 错误、p50 0.3 s / p99 1.2 s，触发卡片选择器时单次 2–14 s。评测数据不记录文本日志、不用于训练，任务结束 30 天内删除。
 
 【方法】面向同仓库历史工程记录（Agent 会话轨迹：任务描述、工具调用、工具输出、推理与修改）。每个 user_id 一个独立 SQLite 文件，原始回合逐条存储，不做摘要。检索：FTS5 BM25（Porter 词干；驼峰标识符同时按内部单词建索引与查询；CJK 字符三元组）。装配：命中按历史会话分组，会话按其命中的倒数排名求和排序（非开头的 user 回合即工具输出权重 0.3），每个会话返回一张「卡片」——该会话的开头回合（当时的任务原文）、写入时生成的摘要、Agent 的收尾消息（改了什么、怎么验证的）加最多 8 条命中回合，渲染为「[UTC 时间戳] 角色: 原文」；最后由一次 gpt-4o-mini 调用按对新任务的有用程度把前 12 张卡片重新排序（只动顺序）。不使用规则槽、时间优先和上下文窗口（面向对话的设计，对会话轨迹无益，已实测）。只返回原文证据，不生成、不伪装答案；不跨 user_id 读取。
 
