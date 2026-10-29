@@ -89,6 +89,7 @@ class Settings:
     card_hits: int = 8                 # v1.1: hit turns returned per session card
     card_sessions: int = 0             # v1.1: cards returned (0 = until top_k / MAX_RESPONSE_CHARS)
     card_tool_weight: float = 0.3      # v1.1: weight of a non-opening user turn (a tool result in an agent transcript) in the session score
+    card_closing: bool = False         # v1.1: a card also carries the session's last assistant turn (the agent's closing message) after the opening turn
     log_level: str = "INFO"
 
     @classmethod
@@ -153,5 +154,6 @@ class Settings:
             card_hits=_bounded("CARD_HITS", int, 8, 1, 100),
             card_sessions=_bounded("CARD_SESSIONS", int, 0, 0, 1000),
             card_tool_weight=_bounded("CARD_TOOL_WEIGHT", float, 0.3, 0.0, 1.0),
+            card_closing=os.environ.get("CARD_CLOSING", "0").strip().lower() in ("1", "true", "yes", "on"),
             log_level=os.environ.get("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         )

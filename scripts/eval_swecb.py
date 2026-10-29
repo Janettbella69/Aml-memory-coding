@@ -163,6 +163,7 @@ def main() -> None:
     # result id -> (session, pos); the opening turn of every session; the kind and size of every turn
     session_of_id: dict[str, tuple[str, int]] = {}
     opening: dict[str, str] = {}
+    closing: dict[str, str] = {}
     kind_of_id: dict[str, str] = {}
     role_of_id: dict[str, str] = {}
     chars_of_id: dict[str, int] = {}
@@ -174,6 +175,8 @@ def main() -> None:
                                     " FROM memories ORDER BY session_id, pos"):
                 session_of_id[row["id"]] = (row["session_id"], row["pos"])
                 opening.setdefault(row["session_id"], row["id"])
+                if row["role"] == "assistant":
+                    closing[row["session_id"]] = row["id"]       # rows come in pos order: the last assistant turn wins
                 head = row["head"]
                 kind_of_id[row["id"]] = ("tool_result" if head.startswith("[tool result]") else "tool_call" if head.startswith("[tool call]")
                                         else "thinking" if head.startswith("[thinking]") else "prompt" if row["role"] == "user" else "assistant")
@@ -210,6 +213,7 @@ def main() -> None:
         session_rank = next((i + 1 for i, s in enumerate(order) if s in expected), None)   # sessions in order of first appearance
         ids = {r.id for r in results}
         statement = any(opening.get(s) in ids for s in expected)
+        closed = any(closing.get(s) in ids for s in expected)
         total = sum(len(r.content) for r in results)
         paired = sum(len(r.content) for r, s in zip(results, sessions) if s in expected)
         head_chars = head_paired = 0          # what a reader sees first: the paired share of the first HEAD_CHARS characters
@@ -220,7 +224,7 @@ def main() -> None:
             head_chars += take
             head_paired += take if s in expected else 0
         rows.append({"instance_id": task["instance_id"], "repo": task["repo"], "rank": rank, "session_rank": session_rank,
-                     "statement": statement, "results": len(results), "chars": total,
+                     "statement": statement, "closing": closed, "results": len(results), "chars": total,
                      "paired_share": (paired / total) if total else 0.0,
                      "head_share": (head_paired / head_chars) if head_chars else 0.0,
                      "sessions_top10": len(set(sessions[:10]))})
@@ -252,6 +256,7 @@ def main() -> None:
         "session_hit@1": hit(1, key="session_rank"), "session_hit@3": hit(3, key="session_rank"),
         "session_hit@5": hit(5, key="session_rank"), "session_mrr": mrr(key="session_rank"),
         "statement": sum(1 for r in rows if r["statement"]) / n if n else 0.0,
+        "closing": sum(1 for r in rows if r["closing"]) / n if n else 0.0,
         "results_median": statistics.median(r["results"] for r in rows) if rows else 0,
         "chars_median": statistics.median(r["chars"] for r in rows) if rows else 0,
         "paired_share_median": statistics.median(r["paired_share"] for r in rows) if rows else 0.0,
@@ -265,7 +270,8 @@ def main() -> None:
     print(f"  paired session by block: hit@1 {hit(1):.3f}  hit@5 {hit(5):.3f}  hit@10 {hit(10):.3f}  hit@{args.top_k} {hit(args.top_k):.3f}  MRR {mrr():.3f}")
     print(f"  paired session by session order: hit@1 {summary['session_hit@1']:.3f}  hit@3 {summary['session_hit@3']:.3f}  "
           f"hit@5 {summary['session_hit@5']:.3f}  MRR {summary['session_mrr']:.3f}")
-    print(f"  its task statement returned: {summary['statement']:.3f}   results/question median {summary['results_median']:.0f}   "
+    print(f"  its task statement returned: {summary['statement']:.3f}   its closing message returned: {summary['closing']:.3f}   "
+          f"results/question median {summary['results_median']:.0f}   "
           f"chars median {summary['chars_median']:,.0f}   paired share: whole list median {100 * summary['paired_share_median']:.0f}%, "
           f"first {HEAD_CHARS // 1000}k chars median {100 * summary['head_share_median']:.0f}%   "
           f"distinct sessions in top 10 median {summary['sessions_top10_median']:.0f}")

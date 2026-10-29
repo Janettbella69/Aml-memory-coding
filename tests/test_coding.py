@@ -92,6 +92,18 @@ def test_session_cards_open_each_session_with_its_task_and_keep_sessions_togethe
     c.__exit__(None, None, None)
 
 
+def test_session_cards_closing_message_follows_the_task():
+    c = make_client(session_cards=True, card_closing=True, rule_slots=0, recency_band=0.0, context_window=0)
+    add(c, "a:chunk-0", "u", SESSION_A, session="A")
+    add(c, "b:chunk-0", "u", SESSION_B, session="B")
+    contents = [r["content"] for r in search(c, "u", "slugify strip dashes")]
+    assert TASK_A in contents[0] and "django/utils/text.py" in contents[1]        # A: task, then the closing message (also a hit: once)
+    assert sum(1 for t in contents if "django/utils/text.py" in t) == 1
+    b = min(i for i, t in enumerate(contents) if TASK_B in t)
+    assert "timezone.py" in contents[b + 1]                                        # B: task, then its closing message although it matches nothing
+    c.__exit__(None, None, None)
+
+
 def test_session_cards_off_returns_hits_only():
     c = make_client(rule_slots=0, recency_band=0.0, context_window=0)
     add(c, "a:chunk-0", "u", SESSION_A, session="A")

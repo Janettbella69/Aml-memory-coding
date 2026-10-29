@@ -479,6 +479,21 @@ class MemoryStore:
                              " ON f.session_id = m.session_id AND f.p = m.pos", list(session_ids)).fetchall()
         return {r["session_id"]: self._chunk(user_id, r) for r in rows}
 
+    def closings(self, user_id: str, session_ids: set[str], conn: Optional[sqlite3.Connection] = None) -> dict[str, Chunk]:
+        """The last stored assistant turn (highest position) of each listed session: in an agent transcript, the agent's
+        closing message - what was changed, where, and how it was verified (the "summary section" SWEContextBench found
+        to be the useful part of a trajectory)."""
+        if not session_ids:
+            return {}
+        with self._reader(user_id, conn) as c:
+            if c is None:
+                return {}
+            marks = ",".join("?" * len(session_ids))
+            rows = c.execute(f"SELECT m.* FROM memories m JOIN (SELECT session_id, MAX(pos) AS p FROM memories"
+                             f" WHERE session_id IN ({marks}) AND lower(role) = 'assistant' GROUP BY session_id) f"
+                             " ON f.session_id = m.session_id AND f.p = m.pos", list(session_ids)).fetchall()
+        return {r["session_id"]: self._chunk(user_id, r) for r in rows}
+
     def newest(self, user_id: str, limit: int, conn: Optional[sqlite3.Connection] = None) -> list[Chunk]:
         if limit <= 0:
             return []

@@ -453,11 +453,16 @@ def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, 
     Sessions are ranked by the reciprocal-rank sum of their hit turns (RRF_K); a user turn that is not the session's
     opening turn weighs CARD_TOOL_WEIGHT - in an agent transcript such turns are almost always tool output, which
     matches broadly (every session that read the same file) and told the paired session apart worst on SWEContextBench.
-    A card is the session's opening turn (the task as it was given, verbatim, even when it is not a hit itself) followed
-    by its hit turns in rank order, at most CARD_HITS of them, each with its +- CONTEXT_WINDOW span; at most CARD_SESSIONS
-    cards (0 = until top_k or MAX_RESPONSE_CHARS). Measured with scripts/eval_swecb.py (docs/METHOD_CARD.md 1.1)."""
+    A card is the session's opening turn (the task as it was given, verbatim, even when it is not a hit itself), with
+    CARD_CLOSING the session's last assistant turn (the agent's closing message: what was changed and how it was verified
+    - SWEContextBench measured that this summary, when it is the right session's, is what lifts a coding agent, while the
+    raw trajectory barely does), then its hit turns in rank order, at most CARD_HITS of them, each with its
+    +- CONTEXT_WINDOW span; at most CARD_SESSIONS cards (0 = until top_k or MAX_RESPONSE_CHARS). Measured with
+    scripts/eval_swecb.py (docs/METHOD_CARD.md, coding-0.1.0)."""
     hits = hits[:top_k]   # the fused pool holds 2 x top_k candidates; the tail only adds noise to the session scores
-    opening = store.openings(user_id, {c.session_id for c, _ in hits}, conn)
+    sessions = {c.session_id for c, _ in hits}
+    opening = store.openings(user_id, sessions, conn)
+    closing = store.closings(user_id, sessions, conn) if settings.card_closing else {}
     score: dict[str, float] = {}
     first: dict[str, int] = {}
     members: dict[str, list[Chunk]] = {}
@@ -475,8 +480,13 @@ def _assemble_cards(store: MemoryStore, conn, settings: Settings, user_id: str, 
         if settings.card_sessions and n >= settings.card_sessions:
             break
         head = opening.get(sid)
-        items: list[tuple[Chunk, bool]] = [(head, False)] if head is not None else []
-        items += [(c, True) for c in members[sid] if head is None or c.id != head.id][:settings.card_hits]
+        tail = closing.get(sid)
+        fixed = [c for c in (head, tail) if c is not None]
+        if tail is not None and head is not None and tail.id == head.id:
+            fixed = [head]
+        fixed_ids = {c.id for c in fixed}
+        items: list[tuple[Chunk, bool]] = [(c, False) for c in fixed]     # the task as given, then the agent's closing message
+        items += [(c, True) for c in members[sid] if c.id not in fixed_ids][:settings.card_hits]
         for chunk, is_hit in items:
             if len(picked) >= top_k or used >= settings.max_response_chars:
                 break
